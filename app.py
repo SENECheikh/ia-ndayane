@@ -11,15 +11,9 @@ st.set_page_config(
 # Design, styles CSS professionnels et blocage TOTAL des icônes GitHub / Streamlit
 st.markdown("""
     <style>
-    /* Règle absolue pour faire disparaître TOUTE la barre du haut (y compris le logo GitHub) */
-    [data-testid="stHeader"] {
-        display: none !important;
-    }
-    
-    /* Nettoyage des marges générées par la suppression de la barre */
-    .block-container {
-        padding-top: 2rem !important;
-    }
+    /* Masquer la barre supérieure de Streamlit/GitHub */
+    [data-testid="stHeader"] { display: none !important; }
+    .block-container { padding-top: 2rem !important; }
     
     /* Alignement et styles des titres */
     .header-container {
@@ -81,29 +75,57 @@ try:
     df = pd.read_csv("cotisations.csv")
     df.columns = df.columns.str.strip()
     
+    # Nettoyage des données textuelles
+    df['Date'] = df['Date'].fillna('Inconnu').astype(str).str.strip()
+    df['Résidence'] = df['Résidence'].fillna('Non spécifiée').astype(str).str.strip()
     df['Montant FCFA'] = pd.to_numeric(df['Montant FCFA'], errors='coerce').fillna(0)
     
-    total_collecte = int(df['Montant FCFA'].sum())
-    membres_total = len(df)
-    membres_cotisants = int((df['Montant FCFA'] >= 1000).sum())
+    # Fusion Nom et Prénom pour l'affichage si besoin
+    df['Nom'] = df['Nom'].fillna('').astype(str).str.strip()
+    df['Prénom'] = df['Prénom'].fillna('').astype(str).str.strip()
+    df['Nom Complet'] = df['Nom'] + " " + df['Prénom']
+    df = df[df['Nom Complet'].str.len() > 2]
+
+    # --- BARRE LATERALE DE FILTRES (SIDEBAR) ---
+    st.sidebar.markdown("### 🔍 Filtres de Recherche")
+    
+    # Filtre par Mois (colonne 'Date' de votre fichier)
+    liste_mois = ["Tous les mois"] + list(df['Date'].unique())
+    mois_choisi = st.sidebar.selectbox("Sélectionner le Mois :", liste_mois)
+    
+    # Filtre par Résidence (quartier)
+    liste_residence = ["Toutes les résidences"] + list(df['Résidence'].unique())
+    residence_choisie = st.sidebar.selectbox("Sélectionner la Résidence :", liste_residence)
+
+    # Application des filtres sur les données
+    df_filtre = df.copy()
+    if mois_choisi != "Tous les mois":
+        df_filtre = df_filtre[df_filtre['Date'] == mois_choisi]
+    if residence_choisie != "Toutes les résidences":
+        df_filtre = df_filtre[df_filtre['Résidence'] == residence_choisie]
+
+    # Calcul des statistiques dynamiques basées sur les filtres
+    total_collecte = int(df_filtre['Montant FCFA'].sum())
+    membres_total = len(df_filtre)
+    membres_cotisants = int((df_filtre['Montant FCFA'] >= 1000).sum())
     membres_retard = membres_total - membres_cotisants
 
-    # --- AFFICHAGE DU BILAN ---
-    st.write("### 📈 Bilan de la collecte du mois")
+    # --- AFFICHAGE DU BILAN DU MOIS ---
+    st.write(f"### 📈 Bilan filtré : {mois_choisi} | {residence_choisie}")
     
     col_a, col_b, col_c = st.columns(3)
     with col_a:
         st.metric(label="Membres Recensés", value=f"{membres_total}")
     with col_b:
-        st.metric(label="Membres Ayant Cotisé", value=f"{membres_cotisants}", delta=f"{membres_cotisants} à jour")
+        st.metric(label="Membres Ayant Cotisé", value=f"{membres_cotisants}")
     with col_c:
-        st.metric(label="Restant à Recouvrer", value=f"{membres_retard} pers.", delta=f"-{membres_retard}", delta_color="inverse")
+        st.metric(label="Restant à Recouvrer", value=f"{membres_retard} pers.", delta=f"-{membres_retard}" if membres_retard > 0 else "0", delta_color="inverse")
 
-    st.success(f"💰 **Montant total collecté sur Wave : {total_collecte:,} FCFA**")
+    st.success(f"💰 **Montant total collecté sur ce filtre : {total_collecte:,} FCFA**")
     st.write("---")
 
-    # --- VENTILATION AUTOMATIQUE ---
-    st.write("### 📊 Répartition des enveloppes (Règles de la Charte)")
+    # --- VENTILATION AUTOMATIQUE (METHODE 1) ---
+    st.write("### 📊 Répartition automatique (Selon la Charte)")
 
     fonds_dev = int(total_collecte * 0.60)
     fonds_sante = int(total_collecte * 0.20)
@@ -120,8 +142,14 @@ try:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"<div class='stat-box'><span class='fonds-title'>💧 4. Enveloppe Bien Commun (8%)</span><br><span style='color:gray; font-size:12px;'>Petites réparations, école</span><div class='fonds-montant'>{fonds_bien_commun:,} FCFA</div></div>", unsafe_allow_html=True)
 
+    # --- AFFICHAGE DE LA LISTE DETAILLEE (OPTIONNEL POUR MIEUX VOIR) ---
+    st.write("---")
+    st.write("### 👥 Détail des membres filtrés")
+    # On affiche uniquement les colonnes importantes pour le village
+    st.dataframe(df_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']], use_container-width=True)
+
 except Exception as e:
     st.error(f"⚠️ Erreur de lecture du fichier 'cotisations.csv'. Détails : {e}")
 
 st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Étape 1 : Validation de la Méthode 1</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Version 2.0 avec Filtres Avancés</p>", unsafe_allow_html=True)
