@@ -73,7 +73,7 @@ try:
         if type_evenement == "Sélectionner..." or not beneficiaire or montant_demande == 0:
             st.warning("⚠️ Veuillez remplir tous les champs obligatoires et inscrire un montant supérieur à 0.")
         else:
-            st.write("### 🤖 Décision de l'IA basée sur la Charte :")
+            st.write("### 🤖 Décision de la Trésoriére basée sur la Charte :")
             
             # CORRECTION TECHNIQUE ICI : Extraction correcte de la valeur de la colonne
             ligne_membre = df[df['Nom Complet'] == nom_selectionne]
