@@ -75,9 +75,14 @@ try:
         else:
             st.write("### 🤖 Décision de l'IA basée sur la Charte :")
             
-            # Vérification du statut de paiement dans la colonne 'Montant FCFA'
-            ligne_membre = df[df['Nom Complet'] == nom_selectionne].iloc
-            valeur_payee = pd.to_numeric(ligne_membre.get('Montant FCFA', 0), errors='coerce')
+            # CORRECTION TECHNIQUE ICI : Extraction correcte de la valeur de la colonne
+            ligne_membre = df[df['Nom Complet'] == nom_selectionne]
+            
+            if not ligne_membre.empty:
+                valeur_payee = pd.to_numeric(ligne_membre['Montant FCFA'].values[0], errors='coerce')
+            else:
+                valeur_payee = 0
+                
             if pd.isna(valeur_payee):
                 valeur_payee = 0
                 
@@ -123,7 +128,7 @@ try:
                 """, unsafe_allow_html=True)
                 
             elif "Décès" in type_evenement:
-                # ALIGNÉ SUR LES AUTRES : Application du plafond Décès de 50 000 FCFA max
+                # Application du plafond Décès de 50 000 FCFA max
                 montant_valide = min(montant_demande, 50000)
                 note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
                 st.markdown(f"""
