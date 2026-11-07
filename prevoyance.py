@@ -76,7 +76,7 @@ try:
             st.write("### 🤖 Décision de l'IA basée sur la Charte :")
             
             # Vérification du statut de paiement dans la colonne 'Montant FCFA'
-            ligne_membre = df[df['Nom Complet'] == nom_selectionne].iloc[0]
+            ligne_membre = df[df['Nom Complet'] == nom_selectionne].iloc
             valeur_payee = pd.to_numeric(ligne_membre.get('Montant FCFA', 0), errors='coerce')
             if pd.isna(valeur_payee):
                 valeur_payee = 0
@@ -94,9 +94,9 @@ try:
                 """, unsafe_allow_html=True)
                 
             elif "Santé" in type_evenement:
-                # Application du plafond Santé : 50 000 FCFA max selon votre document
+                # Application du plafond Santé : 50 000 FCFA max
                 montant_valide = min(montant_demande, 50000)
-                note_plafond = "⚠️ La demande initiale dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
+                note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
                 st.markdown(f"""
                     <div class='valide-box'>
                         <h3>🟢 ENVELOPPE SANTÉ VALIDÉE</h3>
@@ -109,7 +109,7 @@ try:
                 """, unsafe_allow_html=True)
                 
             elif "Bien Commun" in type_evenement:
-                # Application du plafond Bien Commun : 25 000 FCFA max selon votre document
+                # Application du plafond Bien Commun : 25 000 FCFA max
                 montant_valide = min(montant_demande, 25000)
                 note_plafond = "⚠️ Le montant demandé dépassait le budget alloué par cas. Ajusté au plafond de 25 000 FCFA." if montant_demande > 25000 else ""
                 st.markdown(f"""
@@ -123,13 +123,16 @@ try:
                 """, unsafe_allow_html=True)
                 
             elif "Décès" in type_evenement:
-                # Forfait deuil obligatoire fixe de 50 000 FCFA selon votre document
+                # ALIGNÉ SUR LES AUTRES : Application du plafond Décès de 50 000 FCFA max
+                montant_valide = min(montant_demande, 50000)
+                note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
                 st.markdown(f"""
                     <div class='valide-box'>
-                        <h3>🟢 FORFAIT DEUIL ACCOMPAGNEMENT VALIDÉ</h3>
+                        <h3>🟢 ENVELOPPE DÉCÈS / SINISTRE VALIDÉE</h3>
                         <p><b>Enveloppe d'imputation :</b> Enveloppe C (Décès / Sinistres - 12% de la collecte globale)</p>
-                        <p><b>Montant forfaitaire obligatoire à remettre :</b> <span style='font-size:20px; font-weight:bold;'>50 000 FCFA</span></p>
-                        <p><b>Famille endeuillée :</b> Concession de {nom_selectionne} (Défunt : {beneficiaire})</p>
+                        <p><b>Montant accordé au Trésorier :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span> (Limite max : 50 000 FCFA)</p>
+                        <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
+                        <p><b>Famille soutenue :</b> Concession de {nom_selectionne} (Défunt : {beneficiaire})</p>
                     </div>
                 """, unsafe_allow_html=True)
                 
@@ -146,4 +149,4 @@ except Exception as e:
     st.error(f"⚠️ Erreur d'accès aux données. Assurez-vous que le fichier 'cotisations.csv' est présent sur GitHub. Détails : {e}")
 
 st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Module Prévoyance Indépendant</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Module Prévoyance Harmonisé</p>", unsafe_allow_html=True)
