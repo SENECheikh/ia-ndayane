@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 1. Configuration de la page aux couleurs du Sénégal
-st.set_page_config(page_title="ADN Ndayane - Méthode 1", page_icon="🇸🇳", layout="centered")
+st.set_page_config(page_title="ASSOS NDAYANE VILLAGE - Méthode 1", page_icon="🇸🇳", layout="centered")
 
 st.markdown("""
     <style>
