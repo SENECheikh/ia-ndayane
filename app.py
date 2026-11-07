@@ -146,7 +146,7 @@ try:
     st.write("---")
     st.write("### 👥 Détail des membres filtrés")
     # On affiche uniquement les colonnes importantes pour le village
-    st.dataframe(df_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']], use_container-width=True)
+    st.dataframe(df_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']], use_container_width=True)
 
 except Exception as e:
     st.error(f"⚠️ Erreur de lecture du fichier 'cotisations.csv'. Détails : {e}")
