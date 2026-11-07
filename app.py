@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 1. Configuration de la page aux couleurs du Sénégal
-st.set_page_config(page_title="ASSOS NDAYANE VILLAGE - Division des cotisations par Bloc", page_icon="🇸🇳", layout="centered")
+st.set_page_config(page_title="ADN Ndayane - Méthode 1", page_icon="🇸🇳", layout="centered")
 
 st.markdown("""
     <style>
@@ -16,8 +16,8 @@ st.markdown("""
 
 # En-tête de l'application
 st.markdown("<h1 style='text-align: center; font-size: 70px; margin-bottom:0;'>🇸🇳</h1>", unsafe_allow_html=True)
-st.markdown("<h1 class='main-title'>ADN NDAYANE</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>Méthode 1 : Ventilation Automatique de la Caisse</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='main-title'>ASSOS NDAYANE VILLAGE</h1>", unsafe_allow_html=True)
+st.markdown("<p class='sub-title'>Ventilation Automatique de la Caisse</p>", unsafe_allow_html=True)
 st.write("---")
 
 # 2. Lecture du fichier cotisations.csv envoyé par le village
