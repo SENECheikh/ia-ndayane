@@ -42,7 +42,11 @@ try:
     df = pd.read_csv("cotisations.csv")
     df.columns = df.columns.str.strip()
     
-    # Nettoyage et fusion prénom/nom pour une recherche simplifiée
+    # Nettoyage des données textuelles
+    df['Date'] = df['Date'].fillna('Inconnu').astype(str).str.strip()
+    df['Résidence'] = df['Résidence'].fillna('Non spécifiée').astype(str).str.strip()
+    
+    # Fusion prénom/nom pour une recherche simplifiée
     df['Nom'] = df['Nom'].fillna('').astype(str).str.strip()
     df['Prénom'] = df['Prénom'].fillna('').astype(str).str.strip()
     df['Nom Complet'] = df['Nom'] + " " + df['Prénom']
@@ -50,108 +54,124 @@ try:
     # Suppression des lignes vides
     df = df[df['Nom Complet'].str.len() > 2]
     df = df.sort_values(by='Nom Complet')
-    liste_membres = df['Nom Complet'].unique()
+
+    # --- BARRE LATERALE DE FILTRES (SIDEBAR) ---
+    st.sidebar.markdown("### 🔍 Restriction de Recherche")
     
-    st.write("### 📋 Formulaire d'Évaluation de Vigilance")
-    st.write("Renseignez les critères de la demande pour obtenir le verdict automatique de l'IA :")
+    # Filtre par Mois
+    liste_mois = ["Tous les mois"] + list(df['Date'].unique())
+    mois_choisi = st.sidebar.selectbox("Filtrer par Mois :", liste_mois)
     
-    # Formulaire utilisateur interactif
-    nom_selectionne = st.selectbox("1. Sélectionner le membre demandeur :", liste_membres)
+    # Filtre par Résidence (Quartier)
+    liste_residence = ["Toutes les résidences"] + list(df['Résidence'].unique())
+    residence_choisie = st.sidebar.selectbox("Filtrer par Résidence :", liste_residence)
+
+    # Application des filtres sur le jeu de données pour affiner la liste des membres
+    df_filtre = df.copy()
+    if mois_choisi != "Tous les mois":
+        df_filtre = df_filtre[df_filtre['Date'] == mois_choisi]
+    if residence_choisie != "Toutes les résidences":
+        df_filtre = df_filtre[df_filtre['Résidence'] == residence_choisie]
+
+    # Génération de la liste déroulante restreinte selon les filtres choisis
+    liste_membres_raffinée = df_filtre['Nom Complet'].unique()
     
-    type_evenement = st.selectbox(
-        "2. Quel est le motif de la demande d'aide ?",
-        ["Sélectionner...", "Urgence Santé (Évacuation, Ordonnance médicale)", "Bien Commun (Réparation infrastructures village)", "Solidarité Décès / Sinistre lourd", "Autre besoin privé (Baptême, Mariage, Cérémonie)"]
-    )
-    
-    beneficiaire = st.text_input("3. Indiquer le nom du bénéficiaire au village :")
-    montant_demande = st.number_input("4. Montant d'argent nécessaire (en FCFA) :", min_value=0, step=5000, value=0)
-    
-    st.write("")
-    bouton = st.button("🚀 EFFECTUER LE CONTRÔLE FINANCIER DE L'IA")
-    
-    if bouton:
-        if type_evenement == "Sélectionner..." or not beneficiaire or montant_demande == 0:
-            st.warning("⚠️ Veuillez remplir tous les champs obligatoires et inscrire un montant supérieur à 0.")
-        else:
-            st.write("### 🤖 Décision de la Trésoriére basée sur la Charte :")
-            
-            # CORRECTION TECHNIQUE ICI : Extraction correcte de la valeur de la colonne
-            ligne_membre = df[df['Nom Complet'] == nom_selectionne]
-            
-            if not ligne_membre.empty:
-                valeur_payee = pd.to_numeric(ligne_membre['Montant FCFA'].values[0], errors='coerce')
+    if len(liste_membres_raffinée) == 0:
+        st.warning("⚠️ Aucun membre ne correspond aux filtres sélectionnés dans la barre latérale.")
+    else:
+        st.write("### 📋 Formulaire d'Évaluation de Vigilance")
+        
+        # 1. Menu déroulant dynamique et raccourci par les filtres
+        nom_selectionne = st.selectbox("1. Sélectionner le membre demandeur :", liste_membres_raffinée)
+        
+        type_evenement = st.selectbox(
+            "2. Quel est le motif de la demande d'aide ?",
+            ["Sélectionner...", "Urgence Santé (Évacuation, Ordonnance médicale)", "Bien Commun (Réparation infrastructures village)", "Solidarité Décès / Sinistre lourd", "Autre besoin privé (Baptême, Mariage, Cérémonie)"]
+        )
+        
+        beneficiaire = st.text_input("3. Indiquer le nom du bénéficiaire au village :")
+        montant_demande = st.number_input("4. Montant d'argent nécessaire (en FCFA) :", min_value=0, step=5000, value=0)
+        
+        st.write("")
+        bouton = st.button("🚀 EFFECTUER LE CONTRÔLE FINANCIER DE L'IA")
+        
+        if bouton:
+            if type_evenement == "Sélectionner..." or not beneficiaire or montant_demande == 0:
+                st.warning("⚠️ Veuillez remplir tous les champs obligatoires et inscrire un montant supérieur à 0.")
             else:
-                valeur_payee = 0
+                st.write("### 🤖 Décision de l'IA basée sur la Charte :")
                 
-            if pd.isna(valeur_payee):
-                valeur_payee = 0
+                # Extraction de la ligne spécifique du membre
+                ligne_membre = df_filtre[df_filtre['Nom Complet'] == nom_selectionne]
                 
-            a_cotise = float(valeur_payee) >= 1000
-            
-            # Application stricte de la Charte de Vigilance
-            if not a_cotise:
-                st.markdown(f"""
-                    <div class='refuse-box'>
-                        <h3>🔴 DEMANDE REFUSÉE (Membre non à jour)</h3>
-                        <p><b>Raison :</b> Le membre <b>{nom_selectionne}</b> ne figure pas comme ayant réglé sa cotisation de 1 000 FCFA pour le mois en cours.</p>
-                        <p><i>Règle appliquée : Les enveloppes de solidarité sont réservées exclusivement aux membres actifs et à jour.</i></p>
-                    </div>
-                """, unsafe_allow_html=True)
+                if not ligne_membre.empty:
+                    valeur_payee = pd.to_numeric(ligne_membre['Montant FCFA'].values[0], errors='coerce')
+                else:
+                    valeur_payee = 0
+                    
+                if pd.isna(valeur_payee):
+                    valeur_payee = 0
+                    
+                a_cotise = float(valeur_payee) >= 1000
                 
-            elif "Santé" in type_evenement:
-                # Application du plafond Santé : 50 000 FCFA max
-                montant_valide = min(montant_demande, 50000)
-                note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
-                st.markdown(f"""
-                    <div class='valide-box'>
-                        <h3>🟢 ENVELOPPE SANTÉ VALIDÉE</h3>
-                        <p><b>Enveloppe d'imputation :</b> Enveloppe A (Santé - 20% de la collecte globale)</p>
-                        <p><b>Montant accordé au Trésorier :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span> (Limite max : 50 000 FCFA)</p>
-                        <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
-                        <p><b>Bénéficiaire enregistré :</b> {beneficiaire}</p>
-                        <p><i>Note : Veuillez faire signer le reçu de caisse d'urgence.</i></p>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-            elif "Bien Commun" in type_evenement:
-                # Application du plafond Bien Commun : 25 000 FCFA max
-                montant_valide = min(montant_demande, 25000)
-                note_plafond = "⚠️ Le montant demandé dépassait le budget alloué par cas. Ajusté au plafond de 25 000 FCFA." if montant_demande > 25000 else ""
-                st.markdown(f"""
-                    <div class='valide-box'>
-                        <h3>🟢 FINANCEMENT BIEN COMMUN VALIDÉ</h3>
-                        <p><b>Enveloppe d'imputation :</b> Enveloppe B (Bien Commun - 8% de la collecte globale)</p>
-                        <p><b>Montant alloué :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span> (Limite max : 25 000 FCFA)</p>
-                        <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
-                        <p><b>Projet communautaire visé :</b> {beneficiaire}</p>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-            elif "Décès" in type_evenement:
-                # Application du plafond Décès de 50 000 FCFA max
-                montant_valide = min(montant_demande, 50000)
-                note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
-                st.markdown(f"""
-                    <div class='valide-box'>
-                        <h3>🟢 ENVELOPPE DÉCÈS / SINISTRE VALIDÉE</h3>
-                        <p><b>Enveloppe d'imputation :</b> Enveloppe C (Décès / Sinistres - 12% de la collecte globale)</p>
-                        <p><b>Montant accordé au Trésorier :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span> (Limite max : 50 000 FCFA)</p>
-                        <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
-                        <p><b>Famille soutenue :</b> Concession de {nom_selectionne} (Défunt : {beneficiaire})</p>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-            else:
-                st.markdown(f"""
-                    <div class='refuse-box'>
-                        <h3>🔴 DEMANDE INTERDITE (Dépense non sociale)</h3>
-                        <p><b>Motif détecté :</b> Dépense privée / Cérémoniale ({type_evenement})</p>
-                        <p><b>Règle de la Charte de Ndayane :</b> Il est strictement interdit d'utiliser l'argent collectif pour les fêtes privées (baptêmes, mariages, Magal, Gamou). Ces fonds appartiennent au développement du village.</p>
-                    </div>
-                """, unsafe_allow_html=True)
+                # Application des règles
+                if not a_cotise:
+                    st.markdown(f"""
+                        <div class='refuse-box'>
+                            <h3>🔴 DEMANDE REFUSÉE (Membre non à jour)</h3>
+                            <p><b>Raison :</b> Le membre <b>{nom_selectionne}</b> ne figure pas comme ayant réglé sa cotisation de 1 000 FCFA sur la période sélectionnée ({mois_choisi}).</p>
+                            <p><i>Règle appliquée : Les enveloppes de solidarité sont réservées exclusivement aux membres actifs et à jour.</i></p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                elif "Santé" in type_evenement:
+                    montant_valide = min(montant_demande, 50000)
+                    note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
+                    st.markdown(f"""
+                        <div class='valide-box'>
+                            <h3>🟢 ENVELOPPE SANTÉ VALIDÉE</h3>
+                            <p><b>Enveloppe d'imputation :</b> Enveloppe A (Santé - 20% du fonds)</p>
+                            <p><b>Montant accordé au Trésorier :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span></p>
+                            <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
+                            <p><b>Bénéficiaire enregistré :</b> {beneficiaire}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                elif "Bien Commun" in type_evenement:
+                    montant_valide = min(montant_demande, 25000)
+                    note_plafond = "⚠️ Le montant demandé dépassait le budget alloué par cas. Ajusté au plafond de 25 000 FCFA." if montant_demande > 25000 else ""
+                    st.markdown(f"""
+                        <div class='valide-box'>
+                            <h3>🟢 FINANCEMENT BIEN COMMUNT VALIDÉ</h3>
+                            <p><b>Enveloppe d'imputation :</b> Enveloppe B (Bien Commun - 8% du fonds)</p>
+                            <p><b>Montant alloué :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span></p>
+                            <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
+                            <p><b>Projet communautaire visé :</b> {beneficiaire}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                elif "Décès" in type_evenement:
+                    montant_valide = min(montant_demande, 50000)
+                    note_plafond = "⚠️ Le montant demandé dépassait la limite autorisée. Le montant a été ajusté au plafond de 50 000 FCFA." if montant_demande > 50000 else ""
+                    st.markdown(f"""
+                        <div class='valide-box'>
+                            <h3>🟢 ENVELOPPE DÉCÈS / SINISTRE VALIDÉE</h3>
+                            <p><b>Enveloppe d'imputation :</b> Enveloppe C (Décès / Sinistres - 12% du fonds)</p>
+                            <p><b>Montant accordé au Trésorier :</b> <span style='font-size:20px; font-weight:bold;'>{montant_valide:,} FCFA</span></p>
+                            <p style='color:#b58105; font-weight:600;'>{note_plafond}</p>
+                            <p><b>Famille soutenue :</b> Concession de {nom_selectionne} (Défunt : {beneficiaire})</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                else:
+                    st.markdown(f"""
+                        <div class='refuse-box'>
+                            <h3>🔴 DEMANDE INTERDITE (Dépense non sociale)</h3>
+                            <p><b>Règle de la Charte :</b> Utilisation des fonds pour festivités privées ou cérémonies religieuses interdite. L'argent appartient au développement collectif.</p>
+                        </div>
+                    """, unsafe_allow_html=True)
 
 except Exception as e:
-    st.error(f"⚠️ Erreur d'accès aux données. Assurez-vous que le fichier 'cotisations.csv' est présent sur GitHub. Détails : {e}")
+    st.error(f"⚠️ Erreur d'accès aux données. Vérifiez que 'cotisations.csv' possède les bonnes colonnes. Détails : {e}")
 
 st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Module Prévoyance Harmonisé</p>", unsafe_allow_html=True)
