@@ -1,23 +1,65 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Configuration de la page aux couleurs du Sénégal
-st.set_page_config(page_title="ASSOS NDAYANE VILLAGE - Méthode 1", page_icon="🇸🇳D", layout="centered")
+# 1. Configuration de la page
+st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="centered")
 
+# Design et styles CSS pour un rendu épuré et professionnel
 st.markdown("""
     <style>
-    .main-title { color: #008543; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; text-align: center; margin-bottom: 0px; }
-    .sub-title { color: #E31B23; text-align: center; font-size: 18px; font-weight: 500; margin-bottom: 25px; }
-    .stat-box { padding: 20px; background-color: #F8F9FA; border: 1px solid #E0E0E0; border-radius: 8px; text-align: center; box-shadow: 1px 1px 5px rgba(0,0,0,0.05); }
-    .fonds-title { font-size: 16px; font-weight: bold; color: #333333; }
+    /* Alignement et styles des titres */
+    .header-container {
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 20px;
+    }
+    .flag-style {
+        font-size: 70px;
+        margin: 0px;
+        padding: 0px;
+        line-height: 1;
+    }
+    .main-title { 
+        color: #008543; /* Vert du Sénégal */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        font-weight: 800; 
+        font-size: 38px;
+        letter-spacing: 1px;
+        margin-top: 5px;
+        margin-bottom: 0px; 
+    }
+    .sub-title { 
+        color: #E31B23; /* Rouge du Sénégal */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 16px; 
+        font-weight: 600; 
+        letter-spacing: 0.5px;
+        margin-top: 2px;
+        margin-bottom: 20px; 
+    }
+    /* Boîtes de statistiques */
+    .stat-box { 
+        padding: 20px; 
+        background-color: #F8F9FA; 
+        border: 1px solid #E0E0E0; 
+        border-radius: 8px; 
+        text-align: center; 
+        box-shadow: 1px 1px 5px rgba(0,0,0,0.05); 
+    }
+    .fonds-title { font-size: 15px; font-weight: bold; color: #333333; }
     .fonds-montant { color: #008543; font-size: 22px; font-weight: bold; margin-top: 5px; }
     </style>
 """, unsafe_allow_html=True)
 
-# En-tête de l'application
-st.markdown("<h1 style='text-align: center; font-size: 70px; margin-bottom:0;'>🇸🇳</h1>", unsafe_allow_html=True)
-st.markdown("<h1 class='main-title'>ASSOS NDAYANE VILLAGE</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sub-title'>Ventilation Automatique de la Caisse</p>", unsafe_allow_html=True)
+# EN-TÊTE OFFICIEL DE L'ASSOCIATION
+st.markdown("""
+    <div class='header-container'>
+        <div class='flag-style'>🇸🇳</div>
+        <h1 class='main-title'>ASSOS NDAYANE VILLAGE</h1>
+        <p class='sub-title'>Ventilation Automatique de la Caisse</p>
+    </div>
+""", unsafe_allow_html=True)
+
 st.write("---")
 
 # 2. Lecture du fichier cotisations.csv envoyé par le village
@@ -25,10 +67,10 @@ try:
     df = pd.read_csv("cotisations.csv")
     df.columns = df.columns.str.strip()
     
-    # Conversion de la colonne Montant en nombre (en ignorant les textes ou espaces vides)
+    # Conversion de la colonne Montant en nombre
     df['Montant FCFA'] = pd.to_numeric(df['Montant FCFA'], errors='coerce').fillna(0)
     
-    # Calcul des statistiques réelles basées sur votre fichier
+    # Calcul des statistiques basées sur votre fichier
     total_collecte = int(df['Montant FCFA'].sum())
     membres_total = len(df)
     membres_cotisants = int((df['Montant FCFA'] >= 1000).sum())
@@ -102,4 +144,4 @@ except Exception as e:
     st.error(f"⚠️ Erreur de lecture. Vérifiez que le fichier est bien nommé 'cotisations.csv' sur votre GitHub. Détails : {e}")
 
 st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>Association pour le Développement de Ndayane | Étape 1 : Validation de la Méthode 1</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 11px;'>ASSOS NDAYANE VILLAGE | Étape 1 : Validation de la Méthode 1</p>", unsafe_allow_html=True)
