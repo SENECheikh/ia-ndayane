@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(
     page_title="ASSOS NDAYANE VILLAGE - Tableau de Bord", 
     page_icon="🇸🇳", 
-    layout="wide" # Format large pour un vrai tableau de bord
+    layout="wide"
 )
 
 # Design aux couleurs du Sénégal (Vert, Or, Rouge) et masquage des menus techniques
@@ -69,6 +69,9 @@ try:
     liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
     residence_choisie = st.sidebar.selectbox("Quartier / Résidence :", liste_residence)
 
+    st.sidebar.markdown("---")
+    st.sidebar.info("📜 **Règles du Comité des Sages :**\n- Adhésion : **1 000 FCFA**\n- Intervention sociale : **25 000 FCFA** (Hospitalisation, Accident grave, Sinistres)\n- **Décès exclu** (en attente d'arbitrage AG)\n- Retard 3 mois : Avertissement\n- Retard +6 mois : Radiation")
+
     # Application des filtres
     df_filtre = df.copy()
     if mois_choisi != "Tous les mois":
@@ -96,26 +99,24 @@ try:
     with c3:
         st.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><div class='kpi-title'>Taux de Participation</div><div class='kpi-value'>{taux_recouvrement} %</div><div class='kpi-sub'>{membres_cotisants} / {membres_total} membres à jour</div></div>", unsafe_allow_html=True)
     with c4:
-        # Calcul du nombre d'interventions sociales possibles (25 000 F / intervention selon les Sages)
-        enveloppe_sociale_globale = int(total_collecte * 0.40) # 20% Santé + 12% Décès + 8% Bien Commun
+        # Calcul du nombre d'interventions sociales possibles à 25 000 F (sur les 40% sociaux)
+        enveloppe_sociale_globale = int(total_collecte * 0.40)
         nb_interventions = enveloppe_sociale_globale // 25000
-        st.markdown(f"<div class='kpi-card'><div class='kpi-title'>Capacité Sociale</div><div class='kpi-value'>{nb_interventions} cas</div><div class='kpi-sub'>Interventions à 25 000 F possibles</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='kpi-card'><div class='kpi-title'>Capacité Sociale</div><div class='kpi-value'>{nb_interventions} cas</div><div class='kpi-sub'>Aides de 25 000 F possibles</div></div>", unsafe_allow_html=True)
 
     st.write("---")
 
-    # --- SECTION 2 : VENTILATION DES FONDS (RÈGLES DE LA CHARTE) ---
-    st.subheader("🏦 Répartition Automatique des Enveloppes")
+    # --- SECTION 2 : VENTILATION DES FONDS (SANS LE DÉCÈS) ---
+    st.subheader("🏦 Répartition des Enveloppes (Charte Révisée)")
     
     fonds_dev = int(total_collecte * 0.60)
-    fonds_sante = int(total_collecte * 0.20)
-    fonds_deces = int(total_collecte * 0.12)
-    fonds_bien_commun = int(total_collecte * 0.08)
+    fonds_sante_accident = int(total_collecte * 0.25)
+    fonds_sinistres_commun = int(total_collecte * 0.15)
 
-    col_f1, col_f2, col_f3, col_f4 = st.columns(4)
-    col_f1.metric("🏗️ Développement (60%)", f"{fonds_dev:,} FCFA", "Projet Électricité")
-    col_f2.metric("🩺 Urgences Santé (20%)", f"{fonds_sante:,} FCFA", "Hospitalisation / Accident")
-    col_f3.metric("🕊️ Solidarité Décès (12%)", f"{fonds_deces:,} FCFA", "Sous arbitrage AG")
-    col_f4.metric("💧 Bien Commun (8%)", f"{fonds_bien_commun:,} FCFA", "Sinistres / Village")
+    col_f1, col_f2, col_f3 = st.columns(3)
+    col_f1.metric("🏗️ Développement (60%)", f"{fonds_dev:,} FCFA", "Projet Électricité / Infrastructures")
+    col_f2.metric("🩺 Santé & Accidents (25%)", f"{fonds_sante_accident:,} FCFA", "Hospitalisation, fractures, blessures graves")
+    col_f3.metric("🌪️ Sinistres & Bien Commun (15%)", f"{fonds_sinistres_commun:,} FCFA", "Incendie, inondation, orage, village")
 
     st.write("---")
 
@@ -124,13 +125,11 @@ try:
 
     with col_graph:
         st.subheader("🏘️ Collecte par Résidence (FCFA)")
-        # Regroupement des montants par quartier
         df_quartier = df_filtre.groupby('Résidence')['Montant FCFA'].sum().sort_values(ascending=False)
         st.bar_chart(df_quartier, color="#008543")
 
     with col_statut:
         st.subheader("⚖️ Suivi Règlement (Comité des Sages)")
-        # Calcul automatique du statut sur l'ensemble du fichier historique pour détecter les retards cumulés
         df_historique = df.copy()
         df_historique['Mois_Impaye'] = (df_historique['Montant FCFA'] < 1000).astype(int)
         suivi_retards = df_historique.groupby(['Nom Complet', 'Résidence'])['Mois_Impaye'].sum().reset_index()
@@ -147,7 +146,6 @@ try:
                 
         suivi_retards['Statut'] = suivi_retards['Mois_Impaye'].apply(definir_statut)
         
-        # Filtrer l'affichage des statuts si une résidence est sélectionnée
         if residence_choisie != "Toutes les résidences":
             suivi_retards = suivi_retards[suivi_retards['Résidence'] == residence_choisie]
             
@@ -164,4 +162,4 @@ except Exception as e:
     st.error(f"⚠️ Erreur lors du chargement des données. Vérifiez que le fichier 'cotisations.csv' est bien présent sur GitHub. Détails : {e}")
 
 st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>ASSOS NDAYANE VILLAGE — Commune de Tocky Gare, Diourbel | Tableau de Bord Officiel</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>ASSOS NDAYANE VILLAGE — Commune de Tocky Gare, Diourbel | Charte révisée par le Comité des Sages</p>", unsafe_allow_html=True)
