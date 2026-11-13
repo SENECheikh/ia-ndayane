@@ -1,22 +1,24 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Configuration de la page
+# 1. Configuration de la page (sans barre latérale)
 st.set_page_config(
     page_title="ASSOS NDAYANE VILLAGE - Tableau de Bord", 
     page_icon="🇸🇳", 
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 # Design aux couleurs du Sénégal (Vert, Or, Rouge) et masquage des menus techniques
 st.markdown("""
     <style>
     [data-testid="stHeader"] { display: none !important; }
+    [data-testid="collapsedControl"] { display: none !important; }
     .block-container { padding-top: 1.5rem !important; }
     
-    .header-container { text-align: center; padding-bottom: 15px; }
+    .header-container { text-align: center; padding-bottom: 10px; }
     .flag-style { font-size: 65px; margin: 0px; line-height: 1; }
-    .main-title { color: #008543; font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 38px; margin-top: 5px; margin-bottom: 0px; }
+    .main-title { color: #008543; font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 36px; margin-top: 5px; margin-bottom: 0px; }
     .sub-title { color: #E31B23; font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 600; margin-top: 2px; margin-bottom: 15px; }
     
     /* Cartes de statistiques */
@@ -27,6 +29,7 @@ st.markdown("""
         border-radius: 8px; 
         text-align: center; 
         box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+        margin-bottom: 10px;
     }
     .kpi-title { font-size: 14px; font-weight: bold; color: #555555; text-transform: uppercase; }
     .kpi-value { color: #008543; font-size: 26px; font-weight: 800; margin-top: 5px; }
@@ -61,16 +64,27 @@ try:
     df['Nom Complet'] = df['Nom'] + " " + df['Prénom']
     df = df[df['Nom Complet'].str.len() > 2]
 
-    # --- BARRE LATÉRALE DE FILTRES ---
-    st.sidebar.markdown("### 🔍 Filtres du Tableau de Bord")
-    liste_mois = ["Tous les mois"] + list(df['Date'].unique())
-    mois_choisi = st.sidebar.selectbox("Période (Mois) :", liste_mois)
+    # --- ZONE DE FILTRES ET RÈGLES DIRECTEMENT VISIBLE SUR MOBILE ---
+    col_filtres, col_regles = st.columns([1, 1.2])
     
-    liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
-    residence_choisie = st.sidebar.selectbox("Quartier / Résidence :", liste_residence)
+    with col_filtres:
+        st.markdown("### 🔍 Filtres du Tableau de Bord")
+        liste_mois = ["Tous les mois"] + list(df['Date'].unique())
+        mois_choisi = st.selectbox("Période (Mois) :", liste_mois)
+        
+        liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
+        residence_choisie = st.selectbox("Quartier / Résidence :", liste_residence)
 
-    st.sidebar.markdown("---")
-    st.sidebar.info("📜 **Règles du Comité des Sages :**\n- Adhésion : **1 000 FCFA**\n- Intervention sociale : **25 000 FCFA** (Hospitalisation, Accident grave, Sinistres)\n- **Décès exclu** (en attente d'arbitrage AG)\n- Retard 3 mois : Avertissement\n- Retard +6 mois : Radiation")
+    with col_regles:
+        st.info("""
+        📜 **Règles du Comité des Sages :**
+        * **Adhésion :** 1 000 FCFA
+        * **Intervention sociale :** 25 000 FCFA *(Hospitalisation, Accident grave, Sinistres naturels)*
+        * **Décès exclu** *(en attente d'arbitrage AG)*
+        * **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation
+        """)
+
+    st.write("---")
 
     # Application des filtres
     df_filtre = df.copy()
@@ -99,7 +113,6 @@ try:
     with c3:
         st.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><div class='kpi-title'>Taux de Participation</div><div class='kpi-value'>{taux_recouvrement} %</div><div class='kpi-sub'>{membres_cotisants} / {membres_total} membres à jour</div></div>", unsafe_allow_html=True)
     with c4:
-        # Calcul du nombre d'interventions sociales possibles à 25 000 F (sur les 40% sociaux)
         enveloppe_sociale_globale = int(total_collecte * 0.40)
         nb_interventions = enveloppe_sociale_globale // 25000
         st.markdown(f"<div class='kpi-card'><div class='kpi-title'>Capacité Sociale</div><div class='kpi-value'>{nb_interventions} cas</div><div class='kpi-sub'>Aides de 25 000 F possibles</div></div>", unsafe_allow_html=True)
