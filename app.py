@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Configuration de la page (sans barre latérale)
+# 1. Configuration de la page
 st.set_page_config(
     page_title="ASSOS NDAYANE VILLAGE - Tableau de Bord", 
     page_icon="🇸🇳", 
@@ -64,25 +64,22 @@ try:
     df['Nom Complet'] = df['Nom'] + " " + df['Prénom']
     df = df[df['Nom Complet'].str.len() > 2]
 
-    # --- ZONE DE FILTRES ET RÈGLES DIRECTEMENT VISIBLE SUR MOBILE ---
-    col_filtres, col_regles = st.columns([1, 1.2])
-    
-    with col_filtres:
-        st.markdown("### 🔍 Filtres du Tableau de Bord")
-        liste_mois = ["Tous les mois"] + list(df['Date'].unique())
-        mois_choisi = st.selectbox("Période (Mois) :", liste_mois)
-        
-        liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
-        residence_choisie = st.selectbox("Quartier / Résidence :", liste_residence)
+    # --- BLOC 1 : RÈGLES DU COMITÉ DES SAGES (AU-DESSUS) ---
+    st.info("""
+    📜 **Règles du Comité des Sages :**
+    * **Adhésion :** 1 000 FCFA
+    * **Intervention sociale :** 25 000 FCFA *(Hospitalisation, Accident grave, Sinistres naturels)*
+    * **Décès exclu** *(en attente d'arbitrage AG)*
+    * **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation
+    """)
 
-    with col_regles:
-        st.info("""
-        📜 **Règles du Comité des Sages :**
-        * **Adhésion :** 1 000 FCFA
-        * **Intervention sociale :** 25 000 FCFA *(Hospitalisation, Accident grave, Sinistres naturels)*
-        * **Décès exclu** *(en attente d'arbitrage AG)*
-        * **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation
-        """)
+    # --- BLOC 2 : FILTRES DU TABLEAU DE BORD (EN DESSOUS) ---
+    st.markdown("### 🔍 Filtres du Tableau de Bord")
+    liste_mois = ["Tous les mois"] + list(df['Date'].unique())
+    mois_choisi = st.selectbox("Période (Mois) :", liste_mois)
+    
+    liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
+    residence_choisie = st.selectbox("Quartier / Résidence :", liste_residence)
 
     st.write("---")
 
