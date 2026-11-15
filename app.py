@@ -22,6 +22,8 @@ try:
     df_dep = pd.read_csv("depenses.csv")
     df_dep.columns = df_dep.columns.str.strip()
     df_dep['Date'] = df_dep['Date'].fillna('Inconnu').astype(str).str.strip().str.lower()
+    # Nettoyage automatique de la colonne Enveloppe (supprime les espaces, accents et harmonise les majuscules)
+    df_dep['Enveloppe'] = df_dep['Enveloppe'].apply(net)
     df_dep['Montant Sorti'] = pd.to_numeric(df_dep['Montant Sorti'], errors='coerce').fillna(0)
 except:
     df_dep = pd.DataFrame(columns=['Date', 'Enveloppe', 'Montant Sorti', 'Motif'])
@@ -89,7 +91,6 @@ with t2:
     d3.markdown(f"<div class='kpi-card'><b>DÉP. SANTÉ</b><div class='kpi-val'>{d_san:,} F</div></div>", unsafe_allow_html=True)
     d4.markdown(f"<div class='kpi-card'><b>DÉP. SINISTRES</b><div class='kpi-val'>{d_sin:,} F</div></div>", unsafe_allow_html=True)
     
-    # CORRECTION DU BUG D'AFFICHAGE ICI :
     if not dep_f.empty:
         st.dataframe(dep_f, use_container_width=True)
     else:
