@@ -88,7 +88,12 @@ with t2:
     d2.markdown(f"<div class='kpi-card'><b>DÉP. DÉVELOPPEMENT</b><div class='kpi-val'>{d_dev:,} F</div></div>", unsafe_allow_html=True)
     d3.markdown(f"<div class='kpi-card'><b>DÉP. SANTÉ</b><div class='kpi-val'>{d_san:,} F</div></div>", unsafe_allow_html=True)
     d4.markdown(f"<div class='kpi-card'><b>DÉP. SINISTRES</b><div class='kpi-val'>{d_sin:,} F</div></div>", unsafe_allow_html=True)
-    st.dataframe(dep_f, use_container_width=True) if not dep_f.empty else st.info("Aucune dépense enregistrée.")
+    
+    # CORRECTION DU BUG D'AFFICHAGE ICI :
+    if not dep_f.empty:
+        st.dataframe(dep_f, use_container_width=True)
+    else:
+        st.info("Aucune dépense enregistrée.")
 
 with t3:
     df_m = df if mois == "Tous les mois" else df[df['Date'] == mois]
