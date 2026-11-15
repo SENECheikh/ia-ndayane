@@ -29,7 +29,7 @@ try:
 except:
     df_dep = pd.DataFrame(columns=['Date', 'Enveloppe', 'Montant Sorti', 'Motif'])
 
-st.info("📜 **Règles du Comité des Sages :**\n* **Adhésion :** 1 000 FCFA\n* **Enveloppe Sociale Fixe :** **25 000 FCFA / mois** *(62,5% Santé & Accidents • 37,5% Sinistres & Bien Commun)*\n* **Décès exclu** *(en attente d'arbitrage AG)*\n* **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation")
+st.info("📜 **Règles du Comité des Sages :**\n* **Adhésion :** 1 000 FCFA\n* **Enveloppe Sociale Fixe :** **25 000 FCFA** *(62,5% Santé & Accidents • 37,5% Sinistres & Bien Commun)*\n* **Décès exclu** *(en attente d'arbitrage AG)*\n* **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation")
 
 st.markdown("### 🔍 Filtres du Tableau de Bord")
 mois_choisi = st.selectbox("Période (Mois) :", ["Tous les mois"] + list(df['Date'].unique()))
@@ -41,9 +41,8 @@ df_dep_filtre = df_dep if mois_choisi == "Tous les mois" else df_dep[df_dep['Dat
 if residence_choisie != "Toutes les résidences":
     df_filtre = df_filtre[df_filtre['Résidence'] == residence_choisie]
 
-# Calcul de la base sociale fixe (25 000 F par mois sélectionné)
-nb_mois_actifs = df_filtre['Date'].nunique() if len(df_filtre) > 0 else 1
-base_sociale = 25000 * nb_mois_actifs
+# Enveloppe sociale strictement fixe à 25 000 FCFA
+BASE_SOCIALE_FIXE = 25000
 
 tab1, tab2, tab3 = st.tabs(["💰 RECETTES", "📤 DÉPENSES", "🏦 RESTE DE LA CAISSE"])
 
@@ -56,8 +55,8 @@ with tab1:
     reste_a_recouvrer = max(0, montant_attendu - total_collecte)
     taux_recouvrement = int((membres_cotisants / membres_total * 100)) if membres_total > 0 else 0
 
-    # Répartition : 25 000 F fixe pour le social (si collecte >= 25 000), le reste au développement
-    enveloppe_sociale = min(total_collecte, base_sociale)
+    # Répartition : 25 000 F fixe pour le social (plafonné au total collecté si < 25 000 F), tout le reste au développement
+    enveloppe_sociale = min(total_collecte, BASE_SOCIALE_FIXE)
     fonds_dev = max(0, total_collecte - enveloppe_sociale)
     fonds_sante = int(enveloppe_sociale * 0.625)
     fonds_sinistres = enveloppe_sociale - fonds_sante
@@ -67,12 +66,12 @@ with tab1:
     c1.markdown(f"<div class='kpi-card'><div class='kpi-title'>Total Collecté</div><div class='kpi-value'>{total_collecte:,} F</div><div class='kpi-sub'>Sur {montant_attendu:,} F attendus</div></div>", unsafe_allow_html=True)
     c2.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><div class='kpi-title'>Reste à Recouvrer</div><div class='kpi-value' style='color:#E31B23;'>{reste_a_recouvrer:,} F</div><div class='kpi-sub'>{membres_retard} ligne(s) en attente</div></div>", unsafe_allow_html=True)
     c3.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><div class='kpi-title'>Taux de Participation</div><div class='kpi-value'>{taux_recouvrement} %</div><div class='kpi-sub'>{membres_cotisants} / {membres_total} cotisations</div></div>", unsafe_allow_html=True)
-    c4.markdown(f"<div class='kpi-card'><div class='kpi-title'>Budget Social Fixe</div><div class='kpi-value'>{enveloppe_sociale:,} F</div><div class='kpi-sub'>25 000 F / mois alloués</div></div>", unsafe_allow_html=True)
+    c4.markdown(f"<div class='kpi-card'><div class='kpi-title'>Budget Social Fixe</div><div class='kpi-value'>{enveloppe_sociale:,} F</div><div class='kpi-sub'>Plafond fixe alloué</div></div>", unsafe_allow_html=True)
 
     st.write("---")
-    st.subheader("🏦 Répartition des Enveloppes (Base Sociale de 25 000 F)")
+    st.subheader("🏦 Répartition des Enveloppes (Base Sociale Fixe de 25 000 F)")
     col_f1, col_f2, col_f3 = st.columns(3)
-    col_f1.metric("🏗️ Développement (Le Reste)", f"{fonds_dev:,} FCFA", "Total collecté moins le social")
+    col_f1.metric("🏗️ Développement (Le Reste)", f"{fonds_dev:,} FCFA", "Total collecté moins les 25 000 F")
     col_f2.metric("🩺 Santé & Accidents (62,5% des 25k)", f"{fonds_sante:,} FCFA", "Hospitalisation, fractures, blessures")
     col_f3.metric("🌪️ Sinistres & Village (37,5% des 25k)", f"{fonds_sinistres:,} FCFA", "Incendie, inondation, orage")
 
@@ -121,9 +120,8 @@ with tab3:
     st.subheader(f"🏦 Solde Réel Disponible en Caisse ({mois_choisi})")
     df_rec_mois = df if mois_choisi == "Tous les mois" else df[df['Date'] == mois_choisi]
     rec_globale = int(df_rec_mois['Montant FCFA'].sum())
-    nb_m = df_rec_mois['Date'].nunique() if len(df_rec_mois) > 0 else 1
     
-    env_soc_g = min(rec_globale, 25000 * nb_m)
+    env_soc_g = min(rec_globale, BASE_SOCIALE_FIXE)
     rec_dev_g = max(0, rec_globale - env_soc_g)
     rec_sante_g = int(env_soc_g * 0.625)
     rec_sinistres_g = env_soc_g - rec_sante_g
