@@ -5,7 +5,8 @@ import unicodedata
 st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("<style>[data-testid='stHeader'], [data-testid='collapsedControl'] {display: none !important;} .block-container {padding-top: 1.5rem !important;} .kpi-card {padding: 15px; background: #F8F9FA; border-top: 4px solid #008543; border-radius: 8px; text-align: center; margin-bottom: 10px;} .kpi-val {color: #008543; font-size: 24px; font-weight: 800;}</style>", unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align:center; color:#008543;'>🇸🇳 ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
+st.markdown("<div style='text-align:center; margin-bottom:10px;'><img src='https://flagcdn.com' width='65'></div>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
 
 def net(t):
     return '' if pd.isna(t) else ''.join(c for c in unicodedata.normalize('NFD', str(t).strip().title()) if unicodedata.category(c) != 'Mn')
