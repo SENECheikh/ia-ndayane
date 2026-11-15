@@ -3,22 +3,19 @@ import pandas as pd
 import unicodedata
 
 st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide", initial_sidebar_state="collapsed")
-st.markdown("<style>[data-testid='stHeader'], [data-testid='collapsedControl'] {display: none !important;} .block-container {padding-top: 1.5rem !important;} .header-container {text-align: center; padding-bottom: 10px;} .flag-style {font-size: 65px; margin: 0px; line-height: 1;} .main-title {color: #008543; font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 36px; margin-top: 5px; margin-bottom: 0px;} .sub-title {color: #E31B23; font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 600; margin-top: 2px; margin-bottom: 15px;} .kpi-card {padding: 18px; background-color: #F8F9FA; border-top: 4px solid #008543; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 10px;} .kpi-title {font-size: 14px; font-weight: bold; color: #555555; text-transform: uppercase;} .kpi-value {color: #008543; font-size: 26px; font-weight: 800; margin-top: 5px;} .kpi-sub {font-size: 12px; color: #888888; margin-top: 3px;}</style>", unsafe_allow_html=True)
+st.markdown("<style>[data-testid='stHeader'], [data-testid='collapsedControl'] {display: none !important;} .block-container {padding-top: 1.5rem !important;} .kpi-card {padding: 15px; background: #F8F9FA; border-top: 4px solid #008543; border-radius: 8px; text-align: center; margin-bottom: 10px;} .kpi-val {color: #008543; font-size: 24px; font-weight: 800;}</style>", unsafe_allow_html=True)
 
-st.markdown("<div class='header-container'><div class='flag-style'>🇸🇳</div><h1 class='main-title'>ASSOS NDAYANE VILLAGE</h1><p class='sub-title'>Tableau de Bord Général & Suivi des Cotisations</p></div>", unsafe_allow_html=True)
-st.write("---")
+st.markdown("<h1 style='text-align:center; color:#008543;'>🇸🇳 ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
 
-def nettoyer(t):
-    if pd.isna(t): return ""
-    return ''.join(c for c in unicodedata.normalize('NFD', str(t).strip().title()) if unicodedata.category(c) != 'Mn')
+def net(t):
+    return '' if pd.isna(t) else ''.join(c for c in unicodedata.normalize('NFD', str(t).strip().title()) if unicodedata.category(c) != 'Mn')
 
 df = pd.read_csv("cotisations.csv")
 df.columns = df.columns.str.strip()
 df['Date'] = df['Date'].fillna('Inconnu').astype(str).str.strip().str.lower()
 df['Résidence'] = df['Résidence'].fillna('Non spécifiée').astype(str).str.strip().replace('', 'Non spécifiée')
-df['Mode paiement'] = df['Mode paiement'].fillna('En attente').astype(str).str.strip()
 df['Montant FCFA'] = pd.to_numeric(df['Montant FCFA'], errors='coerce').fillna(0)
-df['Nom Complet'] = (df['Nom'].apply(nettoyer) + " " + df['Prénom'].apply(nettoyer)).str.strip()
+df['Nom Complet'] = (df['Nom'].apply(net) + " " + df['Prénom'].apply(net)).str.strip()
 df = df[df['Nom Complet'].str.len() > 2]
 
 try:
@@ -29,106 +26,87 @@ try:
 except:
     df_dep = pd.DataFrame(columns=['Date', 'Enveloppe', 'Montant Sorti', 'Motif'])
 
-st.info("📜 **Règles du Comité des Sages :**\n* **Adhésion :** 1 000 FCFA\n* **Enveloppe Sociale Fixe :** **25 000 FCFA** *(62,5% Santé & Accidents • 37,5% Sinistres & Bien Commun)*\n* **Décès exclu** *(en attente d'arbitrage AG)*\n* **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation")
+st.info("📜 **Règles des Sages :** Adhésion : 1 000 F • **Social Fixe : 25 000 F** (62,5% Santé/Accidents • 37,5% Sinistres/Village) • Décès exclu • Retard 3 mois : Avertissement | +6 mois : Radiation")
 
-st.markdown("### 🔍 Filtres du Tableau de Bord")
-mois_choisi = st.selectbox("Période (Mois) :", ["Tous les mois"] + list(df['Date'].unique()))
-residence_choisie = st.selectbox("Quartier / Résidence :", ["Toutes les résidences"] + sorted(list(df['Résidence'].unique())))
-st.write("---")
+mois = st.selectbox("📅 Période (Mois) :", ["Tous les mois"] + list(df['Date'].unique()))
+res = st.selectbox("🏘️ Quartier / Résidence :", ["Toutes les résidences"] + sorted(list(df['Résidence'].unique())))
 
-df_filtre = df if mois_choisi == "Tous les mois" else df[df['Date'] == mois_choisi]
-df_dep_filtre = df_dep if mois_choisi == "Tous les mois" else df_dep[df_dep['Date'] == mois_choisi]
-if residence_choisie != "Toutes les résidences":
-    df_filtre = df_filtre[df_filtre['Résidence'] == residence_choisie]
+df_f = df if mois == "Tous les mois" else df[df['Date'] == mois]
+dep_f = df_dep if mois == "Tous les mois" else df_dep[df_dep['Date'] == mois]
+if res != "Toutes les résidences":
+    df_f = df_f[df_f['Résidence'] == res]
 
-# Enveloppe sociale strictement fixe à 25 000 FCFA
-BASE_SOCIALE_FIXE = 25000
+# Calculs globaux
+tot_rec = int(df_f['Montant FCFA'].sum())
+tot_dep = int(dep_f['Montant Sorti'].sum())
+d_dev = int(dep_f[dep_f['Enveloppe'] == 'Developpement']['Montant Sorti'].sum()) if not dep_f.empty else 0
+d_san = int(dep_f[dep_f['Enveloppe'] == 'Sante']['Montant Sorti'].sum()) if not dep_f.empty else 0
+d_sin = int(dep_f[dep_f['Enveloppe'] == 'Sinistres']['Montant Sorti'].sum()) if not dep_f.empty else 0
 
-tab1, tab2, tab3 = st.tabs(["💰 RECETTES", "📤 DÉPENSES", "🏦 RESTE DE LA CAISSE"])
+env_soc = min(tot_rec, 25000)
+f_dev = max(0, tot_rec - env_soc)
+f_san = int(env_soc * 0.625)
+f_sin = env_soc - f_san
 
-with tab1:
-    total_collecte = int(df_filtre['Montant FCFA'].sum())
-    membres_total = len(df_filtre)
-    membres_cotisants = int((df_filtre['Montant FCFA'] >= 1000).sum())
-    membres_retard = membres_total - membres_cotisants
-    montant_attendu = membres_total * 1000
-    reste_a_recouvrer = max(0, montant_attendu - total_collecte)
-    taux_recouvrement = int((membres_cotisants / membres_total * 100)) if membres_total > 0 else 0
+t1, t2, t3 = st.tabs(["💰 RECETTES", "📤 DÉPENSES", "🏦 RESTE DE LA CAISSE"])
 
-    # Répartition : 25 000 F fixe pour le social (plafonné au total collecté si < 25 000 F), tout le reste au développement
-    enveloppe_sociale = min(total_collecte, BASE_SOCIALE_FIXE)
-    fonds_dev = max(0, total_collecte - enveloppe_sociale)
-    fonds_sante = int(enveloppe_sociale * 0.60)
-    fonds_sinistres = enveloppe_sociale - fonds_sante
-
-    st.subheader(f"📈 Situation Financière ({mois_choisi} | {residence_choisie})")
+with t1:
+    nb_tot = len(df_f)
+    nb_ok = int((df_f['Montant FCFA'] >= 1000).sum())
     c1, c2, c3, c4 = st.columns(4)
-    c1.markdown(f"<div class='kpi-card'><div class='kpi-title'>Total Collecté</div><div class='kpi-value'>{total_collecte:,} F</div><div class='kpi-sub'>Sur {montant_attendu:,} F attendus</div></div>", unsafe_allow_html=True)
-    c2.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><div class='kpi-title'>Reste à Recouvrer</div><div class='kpi-value' style='color:#E31B23;'>{reste_a_recouvrer:,} F</div><div class='kpi-sub'>{membres_retard} ligne(s) en attente</div></div>", unsafe_allow_html=True)
-    c3.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><div class='kpi-title'>Taux de Participation</div><div class='kpi-value'>{taux_recouvrement} %</div><div class='kpi-sub'>{membres_cotisants} / {membres_total} cotisations</div></div>", unsafe_allow_html=True)
-    c4.markdown(f"<div class='kpi-card'><div class='kpi-title'>Budget Social Fixe</div><div class='kpi-value'>{enveloppe_sociale:,} F</div><div class='kpi-sub'>Plafond fixe alloué</div></div>", unsafe_allow_html=True)
+    c1.markdown(f"<div class='kpi-card'><b>TOTAL COLLECTÉ</b><div class='kpi-val'>{tot_rec:,} F</div><small>Sur {nb_tot*1000:,} F</small></div>", unsafe_allow_html=True)
+    c2.markdown(f"<div class='kpi-card' style='border-color:#E31B23;'><b>RESTE À RECOUVRIR</b><div class='kpi-val' style='color:#E31B23;'>{max(0, nb_tot*1000 - tot_rec):,} F</div><small>{nb_tot - nb_ok} en attente</small></div>", unsafe_allow_html=True)
+    c3.markdown(f"<div class='kpi-card' style='border-color:#FDEF42;'><b>PARTICIPATION</b><div class='kpi-val'>{int(nb_ok/nb_tot*100) if nb_tot else 0} %</div><small>{nb_ok} / {nb_tot} cotisations</small></div>", unsafe_allow_html=True)
+    c4.markdown(f"<div class='kpi-card'><b>BUDGET SOCIAL FIXE</b><div class='kpi-val'>{env_soc:,} F</div><small>Plafond fixe</small></div>", unsafe_allow_html=True)
 
-    st.write("---")
-    st.subheader("🏦 Répartition des Enveloppes (Base Sociale Fixe de 25 000 F)")
-    col_f1, col_f2, col_f3 = st.columns(3)
-    col_f1.metric("🏗️ Développement (Le Reste)", f"{fonds_dev:,} FCFA", "Total collecté moins les 25 000 F")
-    col_f2.metric("🩺 Santé & Accidents (62% des 25k)", f"{fonds_sante:,} FCFA", "Hospitalisation, fractures, blessures")
-    col_f3.metric("🌪️ Sinistres & Village (40% des 25k)", f"{fonds_sinistres:,} FCFA", "Incendie, inondation, orage")
+    st.subheader("🏦 Répartition (Base Sociale Fixe de 25 000 F)")
+    f1, f2, f3 = st.columns(3)
+    f1.metric("🏗️ Développement (Le Reste)", f"{f_dev:,} FCFA")
+    f2.metric("🩺 Santé & Accidents (62,5%)", f"{f_san:,} FCFA")
+    f3.metric("🌪️ Sinistres & Village (37,5%)", f"{f_sin:,} FCFA")
 
-    st.write("---")
-    col_graph, col_statut = st.columns([1.2, 1])
-    with col_graph:
-        st.subheader("🏘️ Collecte par Résidence (FCFA)")
-        st.bar_chart(df_filtre.groupby('Résidence')['Montant FCFA'].sum().sort_values(ascending=False), color="#008543")
+    g1, g2 = st.columns(2)
+    with g1:
+        st.subheader("🏘️ Par Résidence")
+        st.bar_chart(df_f.groupby('Résidence')['Montant FCFA'].sum(), color="#008543")
+    with g2:
+        st.subheader("⚖️ Statuts (Comité des Sages)")
+        m_tot = df['Date'].nunique()
+        pay = df[df['Montant FCFA'] >= 1000].groupby('Nom Complet')['Date'].nunique()
+        st_df = df[['Nom Complet', 'Résidence']].drop_duplicates('Nom Complet')
+        st_df['Imp'] = (m_tot - st_df['Nom Complet'].map(pay).fillna(0).astype(int)).clip(0)
+        st_df['Statut'] = st_df['Imp'].apply(lambda x: "🔴 Radié (+6m)" if x >= 6 else ("🟠 Avert. (3-5m)" if x >= 3 else (f"🟡 Retard ({x}m)" if x > 0 else "🟢 À jour")))
+        if res != "Toutes les résidences": st_df = st_df[st_df['Résidence'] == res]
+        st.dataframe(st_df[['Nom Complet', 'Résidence', 'Statut']], use_container_width=True, height=250)
 
-    with col_statut:
-        st.subheader("⚖️ Suivi Règlement (Comité des Sages)")
-        mois_enregistres = df['Date'].nunique()
-        paiements = df[df['Montant FCFA'] >= 1000].groupby('Nom Complet')['Date'].nunique()
-        tous = df[['Nom Complet', 'Résidence']].drop_duplicates(subset=['Nom Complet'])
-        tous['Impayes'] = (mois_enregistres - tous['Nom Complet'].map(paiements).fillna(0).astype(int)).clip(lower=0)
-        tous['Statut'] = tous['Impayes'].apply(lambda x: "🔴 Radié (+6 mois)" if x >= 6 else ("🟠 Avertissement (3-5 mois)" if x >= 3 else (f"🟡 En retard ({x} mois)" if x > 0 else "🟢 À jour")))
-        if residence_choisie != "Toutes les résidences":
-            tous = tous[tous['Résidence'] == residence_choisie]
-        st.dataframe(tous[['Nom Complet', 'Résidence', 'Statut']].sort_values(by='Statut', ascending=False), use_container_width=True, height=300)
+    st.subheader("📋 Registre des Cotisations")
+    st.dataframe(df_f[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']], use_container_width=True)
 
-    st.write("---")
-    st.subheader("📋 Registre Détaillé des Transactions")
-    st.dataframe(df_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']].sort_values(by=['Date', 'Montant FCFA', 'Nom Complet']), use_container_width=True)
-
-with tab2:
-    st.subheader(f"📤 Suivi des Dépenses ({mois_choisi})")
-    total_sorties = int(df_dep_filtre['Montant Sorti'].sum())
-    dep_dev = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Developpement']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
-    dep_sante = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Sante']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
-    dep_sinistres = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Sinistres']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
-
+with t2:
     d1, d2, d3, d4 = st.columns(4)
-    d1.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><div class='kpi-title'>Total Dépensé</div><div class='kpi-value' style='color:#E31B23;'>{total_sorties:,} F</div><div class='kpi-sub'>Toutes enveloppes</div></div>", unsafe_allow_html=True)
-    d2.markdown(f"<div class='kpi-card'><div class='kpi-title'>Dép. Développement</div><div class='kpi-value'>{dep_dev:,} F</div><div class='kpi-sub'>Infrastructures</div></div>", unsafe_allow_html=True)
-    d3.markdown(f"<div class='kpi-card'><div class='kpi-title'>Dép. Santé</div><div class='kpi-value'>{dep_sante:,} F</div><div class='kpi-sub'>Urgences médicales</div></div>", unsafe_allow_html=True)
-    d4.markdown(f"<div class='kpi-card'><div class='kpi-title'>Dép. Sinistres</div><div class='kpi-value'>{dep_sinistres:,} F</div><div class='kpi-sub'>Village & Catastrophes</div></div>", unsafe_allow_html=True)
+    d1.markdown(f"<div class='kpi-card' style='border-color:#E31B23;'><b>TOTAL DÉPENSÉ</b><div class='kpi-val' style='color:#E31B23;'>{tot_dep:,} F</div></div>", unsafe_allow_html=True)
+    d2.markdown(f"<div class='kpi-card'><b>DÉP. DÉVELOPPEMENT</b><div class='kpi-val'>{d_dev:,} F</div></div>", unsafe_allow_html=True)
+    d3.markdown(f"<div class='kpi-card'><b>DÉP. SANTÉ</b><div class='kpi-val'>{d_san:,} F</div></div>", unsafe_allow_html=True)
+    d4.markdown(f"<div class='kpi-card'><b>DÉP. SINISTRES</b><div class='kpi-val'>{d_sin:,} F</div></div>", unsafe_allow_html=True)
+    st.dataframe(dep_f, use_container_width=True) if not dep_f.empty else st.info("Aucune dépense enregistrée.")
 
-    st.write("---")
-    st.subheader("📋 Journal des Dépenses Validées")
-    if not df_dep_filtre.empty:
-        st.dataframe(df_dep_filtre, use_container_width=True)
-    else:
-        st.info("Aucune dépense enregistrée pour cette période.")
-
-with tab3:
-    st.subheader(f"🏦 Solde Réel Disponible en Caisse ({mois_choisi})")
-    df_rec_mois = df if mois_choisi == "Tous les mois" else df[df['Date'] == mois_choisi]
-    rec_globale = int(df_rec_mois['Montant FCFA'].sum())
-    
-    env_soc_g = min(rec_globale, BASE_SOCIALE_FIXE)
-    rec_dev_g = max(0, rec_globale - env_soc_g)
-    rec_sante_g = int(env_soc_g * 0.60)
-    rec_sinistres_g = env_soc_g - rec_sante_g
-    
-    reste_dev = rec_dev_g - dep_dev
-    reste_sante = rec_sante_g - dep_sante
-    reste_sinistres = rec_sinistres_g - dep_sinistres
-    reste_total = rec_globale - total_sorties
+with t3:
+    df_m = df if mois == "Tous les mois" else df[df['Date'] == mois]
+    rg = int(df_m['Montant FCFA'].sum())
+    es = min(rg, 25000)
+    rd, rsa, rsi = max(0, rg - es), int(es * 0.625), es - int(es * 0.625)
 
     r1, r2, r3, r4 = st.columns(4)
+    r1.markdown(f"<div class='kpi-card'><b>RESTE GLOBAL</b><div class='kpi-val'>{rg - tot_dep:,} F</div></div>", unsafe_allow_html=True)
+    r2.markdown(f"<div class='kpi-card'><b>RESTE DÉVELOPPEMENT</b><div class='kpi-val'>{rd - d_dev:,} F</div></div>", unsafe_allow_html=True)
+    r3.markdown(f"<div class='kpi-card'><b>RESTE SANTÉ</b><div class='kpi-val'>{rsa - d_san:,} F</div></div>", unsafe_allow_html=True)
+    r4.markdown(f"<div class='kpi-card'><b>RESTE SINISTRES</b><div class='kpi-val'>{rsi - d_sin:,} F</div></div>", unsafe_allow_html=True)
+
+    st.table(pd.DataFrame({
+        "Enveloppe": ["🏗️ Développement", "🩺 Santé (62,5% des 25k)", "🌪️ Sinistres (37,5% des 25k)", "💰 TOTAL"],
+        "Recettes": [f"{rd:,} F", f"{rsa:,} F", f"{rsi:,} F", f"{rg:,} F"],
+        "Dépenses": [f"{d_dev:,} F", f"{d_san:,} F", f"{d_sin:,} F", f"{tot_dep:,} F"],
+        "Reste en Caisse": [f"{rd - d_dev:,} F", f"{rsa - d_san:,} F", f"{rsi - d_sin:,} F", f"{rg - tot_dep:,} F"]
+    }))
+
+st.markdown("<p style='text-align:center; color:gray; font-size:12px;'>ASSOS NDAYANE VILLAGE — Commune de Tocky Gare, Diourbel</p>", unsafe_allow_html=True)
