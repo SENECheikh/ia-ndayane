@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import unicodedata
-import streamlit as st
-import pandas as pd
-import unicodedata
 
 st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide", initial_sidebar_state="collapsed")
 
@@ -32,10 +29,6 @@ st.markdown("""
 
 st.markdown("""
 <div style='text-align:center; margin-bottom:10px;'>
-...
-
-st.markdown("""
-<div style='text-align:center; margin-bottom:10px;'>
     <svg width="75" height="50" viewBox="0 0 900 600" style="border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
         <rect width="300" height="600" fill="#00853f"/>
         <rect x="300" width="300" height="600" fill="#fdef42"/>
@@ -46,9 +39,6 @@ st.markdown("""
 <h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1>
 <p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>
 """, unsafe_allow_html=True)
-
-#st.markdown("<div style='text-align:center; margin-bottom:10px;'><img src='https://flagcdn.com' width='65'></div>", unsafe_allow_html=True)
-#st.markdown("<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
 
 def net(t):
     return '' if pd.isna(t) else ''.join(c for c in unicodedata.normalize('NFD', str(t).strip().title()) if unicodedata.category(c) != 'Mn')
@@ -65,7 +55,6 @@ try:
     df_dep = pd.read_csv("depenses.csv")
     df_dep.columns = df_dep.columns.str.strip()
     df_dep['Date'] = df_dep['Date'].fillna('Inconnu').astype(str).str.strip().str.lower()
-    # Nettoyage automatique de la colonne Enveloppe (supprime les espaces, accents et harmonise les majuscules)
     df_dep['Enveloppe'] = df_dep['Enveloppe'].apply(net)
     df_dep['Montant Sorti'] = pd.to_numeric(df_dep['Montant Sorti'], errors='coerce').fillna(0)
 except:
@@ -81,7 +70,6 @@ dep_f = df_dep if mois == "Tous les mois" else df_dep[df_dep['Date'] == mois]
 if res != "Toutes les résidences":
     df_f = df_f[df_f['Résidence'] == res]
 
-# Calculs globaux
 tot_rec = int(df_f['Montant FCFA'].sum())
 tot_dep = int(dep_f['Montant Sorti'].sum())
 d_dev = int(dep_f[dep_f['Enveloppe'] == 'Developpement']['Montant Sorti'].sum()) if not dep_f.empty else 0
@@ -100,8 +88,8 @@ with t1:
     nb_ok = int((df_f['Montant FCFA'] >= 1000).sum())
     c1, c2, c3, c4 = st.columns(4)
     c1.markdown(f"<div class='kpi-card'><b>TOTAL COLLECTÉ</b><div class='kpi-val'>{tot_rec:,} F</div><small>Sur {nb_tot*1000:,} F</small></div>", unsafe_allow_html=True)
-    c2.markdown(f"<div class='kpi-card' style='border-color:#E31B23;'><b>RESTE À RECOUVRIR</b><div class='kpi-val' style='color:#E31B23;'>{max(0, nb_tot*1000 - tot_rec):,} F</div><small>{nb_tot - nb_ok} en attente</small></div>", unsafe_allow_html=True)
-    c3.markdown(f"<div class='kpi-card' style='border-color:#FDEF42;'><b>PARTICIPATION</b><div class='kpi-val'>{int(nb_ok/nb_tot*100) if nb_tot else 0} %</div><small>{nb_ok} / {nb_tot} cotisations</small></div>", unsafe_allow_html=True)
+    c2.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><b>RESTE À RECOUVRIR</b><div class='kpi-val' style='color:#E31B23;'>{max(0, nb_tot*1000 - tot_rec):,} F</div><small>{nb_tot - nb_ok} en attente</small></div>", unsafe_allow_html=True)
+    c3.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><b>PARTICIPATION</b><div class='kpi-val'>{int(nb_ok/nb_tot*100) if nb_tot else 0} %</div><small>{nb_ok} / {nb_tot} cotisations</small></div>", unsafe_allow_html=True)
     c4.markdown(f"<div class='kpi-card'><b>BUDGET SOCIAL FIXE</b><div class='kpi-val'>{env_soc:,} F</div><small>Plafond fixe</small></div>", unsafe_allow_html=True)
 
     st.subheader("🏦 Répartition (Base Sociale Fixe de 25 000 F)")
@@ -129,11 +117,10 @@ with t1:
 
 with t2:
     d1, d2, d3, d4 = st.columns(4)
-    d1.markdown(f"<div class='kpi-card' style='border-color:#E31B23;'><b>TOTAL DÉPENSÉ</b><div class='kpi-val' style='color:#E31B23;'>{tot_dep:,} F</div></div>", unsafe_allow_html=True)
+    d1.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><b>TOTAL DÉPENSÉ</b><div class='kpi-val' style='color:#E31B23;'>{tot_dep:,} F</div></div>", unsafe_allow_html=True)
     d2.markdown(f"<div class='kpi-card'><b>DÉP. DÉVELOPPEMENT</b><div class='kpi-val'>{d_dev:,} F</div></div>", unsafe_allow_html=True)
     d3.markdown(f"<div class='kpi-card'><b>DÉP. SANTÉ</b><div class='kpi-val'>{d_san:,} F</div></div>", unsafe_allow_html=True)
     d4.markdown(f"<div class='kpi-card'><b>DÉP. SINISTRES</b><div class='kpi-val'>{d_sin:,} F</div></div>", unsafe_allow_html=True)
-    
     if not dep_f.empty:
         st.dataframe(dep_f, use_container_width=True)
     else:
