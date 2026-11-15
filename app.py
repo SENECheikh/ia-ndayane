@@ -58,7 +58,7 @@ with tab1:
     # Répartition : 25 000 F fixe pour le social (plafonné au total collecté si < 25 000 F), tout le reste au développement
     enveloppe_sociale = min(total_collecte, BASE_SOCIALE_FIXE)
     fonds_dev = max(0, total_collecte - enveloppe_sociale)
-    fonds_sante = int(enveloppe_sociale * 0.625)
+    fonds_sante = int(enveloppe_sociale * 0.60)
     fonds_sinistres = enveloppe_sociale - fonds_sante
 
     st.subheader(f"📈 Situation Financière ({mois_choisi} | {residence_choisie})")
@@ -72,8 +72,8 @@ with tab1:
     st.subheader("🏦 Répartition des Enveloppes (Base Sociale Fixe de 25 000 F)")
     col_f1, col_f2, col_f3 = st.columns(3)
     col_f1.metric("🏗️ Développement (Le Reste)", f"{fonds_dev:,} FCFA", "Total collecté moins les 25 000 F")
-    col_f2.metric("🩺 Santé & Accidents (62,5% des 25k)", f"{fonds_sante:,} FCFA", "Hospitalisation, fractures, blessures")
-    col_f3.metric("🌪️ Sinistres & Village (37,5% des 25k)", f"{fonds_sinistres:,} FCFA", "Incendie, inondation, orage")
+    col_f2.metric("🩺 Santé & Accidents (62% des 25k)", f"{fonds_sante:,} FCFA", "Hospitalisation, fractures, blessures")
+    col_f3.metric("🌪️ Sinistres & Village (40% des 25k)", f"{fonds_sinistres:,} FCFA", "Incendie, inondation, orage")
 
     st.write("---")
     col_graph, col_statut = st.columns([1.2, 1])
@@ -123,7 +123,7 @@ with tab3:
     
     env_soc_g = min(rec_globale, BASE_SOCIALE_FIXE)
     rec_dev_g = max(0, rec_globale - env_soc_g)
-    rec_sante_g = int(env_soc_g * 0.625)
+    rec_sante_g = int(env_soc_g * 0.60)
     rec_sinistres_g = env_soc_g - rec_sante_g
     
     reste_dev = rec_dev_g - dep_dev
