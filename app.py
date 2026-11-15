@@ -1,6 +1,38 @@
 import streamlit as st
 import pandas as pd
 import unicodedata
+import streamlit as st
+import pandas as pd
+import unicodedata
+
+st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide", initial_sidebar_state="collapsed")
+
+st.markdown("""
+<style>
+[data-testid='stHeader'], [data-testid='collapsedControl'] {display: none !important;}
+.block-container {padding-top: 1.5rem !important;}
+.stApp {background-color: #F4F7F5;}
+.kpi-card {
+    background-color: #FFFFFF;
+    padding: 20px 15px;
+    border-radius: 12px;
+    border-top: 5px solid #008543;
+    border-left: 1px solid #E2E8F0;
+    border-right: 1px solid #E2E8F0;
+    border-bottom: 1px solid #E2E8F0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    margin-bottom: 12px;
+}
+.kpi-card b {font-size: 13px; color: #475569; letter-spacing: 0.5px;}
+.kpi-val {color: #008543; font-size: 26px; font-weight: 800; margin: 6px 0;}
+.kpi-card small {color: #64748B; font-size: 12px;}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='text-align:center; margin-bottom:10px;'>
+...
 
 st.markdown("""
 <div style='text-align:center; margin-bottom:10px;'>
