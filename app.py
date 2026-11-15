@@ -1,175 +1,129 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Configuration de la page
-st.set_page_config(
-    page_title="ASSOS NDAYANE VILLAGE - Tableau de Bord", 
-    page_icon="🇸🇳", 
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
+# 1. Configuration simple de la page
+st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide")
 
-# Design aux couleurs du Sénégal (Vert, Or, Rouge) et masquage des menus techniques
-st.markdown("""
-    <style>
-    [data-testid="stHeader"] { display: none !important; }
-    [data-testid="collapsedControl"] { display: none !important; }
-    .block-container { padding-top: 1.5rem !important; }
-    
-    .header-container { text-align: center; padding-bottom: 10px; }
-    .flag-style { font-size: 65px; margin: 0px; line-height: 1; }
-    .main-title { color: #008543; font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 36px; margin-top: 5px; margin-bottom: 0px; }
-    .sub-title { color: #E31B23; font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 600; margin-top: 2px; margin-bottom: 15px; }
-    
-    /* Cartes de statistiques */
-    .kpi-card { 
-        padding: 18px; 
-        background-color: #F8F9FA; 
-        border-top: 4px solid #008543;
-        border-radius: 8px; 
-        text-align: center; 
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
-        margin-bottom: 10px;
-    }
-    .kpi-title { font-size: 14px; font-weight: bold; color: #555555; text-transform: uppercase; }
-    .kpi-value { color: #008543; font-size: 26px; font-weight: 800; margin-top: 5px; }
-    .kpi-sub { font-size: 12px; color: #888888; margin-top: 3px; }
-    </style>
-""", unsafe_allow_html=True)
+# Masquer uniquement la barre technique du haut
+st.markdown("<style>[data-testid='stHeader'] {display: none !important;}</style>", unsafe_allow_html=True)
 
-# EN-TÊTE OFFICIEL
-st.markdown("""
-    <div class='header-container'>
-        <div class='flag-style'>🇸🇳</div>
-        <h1 class='main-title'>ASSOS NDAYANE VILLAGE</h1>
-        <p class='sub-title'>Tableau de Bord Général & Suivi des Cotisations</p>
-    </div>
-""", unsafe_allow_html=True)
-
+# EN-TÊTE SIMPLE
+st.markdown("<h1 style='text-align: center; color: #008543;'>🇸🇳 ASSOS NDAYANE VILLAGE</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #E31B23; font-weight: bold;'>Situation Financière : Recettes, Dépenses & Reste en Caisse</p>", unsafe_allow_html=True)
 st.write("---")
 
-# 2. Chargement et traitement des données
 try:
-    df = pd.read_csv("cotisations.csv")
-    df.columns = df.columns.str.strip()
-    
-    # Nettoyage des colonnes
-    df['Date'] = df['Date'].fillna('Inconnu').astype(str).str.strip()
-    df['Résidence'] = df['Résidence'].fillna('Non spécifiée').astype(str).str.strip()
-    df['Mode paiement'] = df['Mode paiement'].fillna('En attente').astype(str).str.strip()
-    df['Montant FCFA'] = pd.to_numeric(df['Montant FCFA'], errors='coerce').fillna(0)
-    
-    df['Nom'] = df['Nom'].fillna('').astype(str).str.strip()
-    df['Prénom'] = df['Prénom'].fillna('').astype(str).str.strip()
-    df['Nom Complet'] = df['Nom'] + " " + df['Prénom']
-    df = df[df['Nom Complet'].str.len() > 2]
+    # A. CHARGEMENT DES RECETTES (Cotisations)
+    df_recettes = pd.read_csv("cotisations.csv")
+    df_recettes.columns = df_recettes.columns.str.strip()
+    df_recettes['Date'] = df_recettes['Date'].fillna('Inconnu').astype(str).str.strip()
+    df_recettes['Résidence'] = df_recettes['Résidence'].fillna('Non spécifiée').astype(str).str.strip()
+    df_recettes['Montant FCFA'] = pd.to_numeric(df_recettes['Montant FCFA'], errors='coerce').fillna(0)
+    df_recettes['Nom Complet'] = df_recettes['Nom'].fillna('').astype(str).str.strip() + " " + df_recettes['Prénom'].fillna('').astype(str).str.strip()
+    df_recettes = df_recettes[df_recettes['Nom Complet'].str.len() > 2]
 
-    # --- BLOC 1 : RÈGLES DU COMITÉ DES SAGES (AU-DESSUS) ---
+    # B. CHARGEMENT DES DÉPENSES (Si le fichier existe)
+    try:
+        df_depenses = pd.read_csv("depenses.csv")
+        df_depenses.columns = df_depenses.columns.str.strip()
+        df_depenses['Date'] = df_depenses['Date'].fillna('Inconnu').astype(str).str.strip()
+        df_depenses['Montant Sorti'] = pd.to_numeric(df_depenses['Montant Sorti'], errors='coerce').fillna(0)
+    except:
+        df_depenses = pd.DataFrame(columns=['Date', 'Enveloppe', 'Montant Sorti', 'Motif'])
+
+    # --- RÈGLES DU COMITÉ DES SAGES ---
     st.info("""
     📜 **Règles du Comité des Sages :**
     * **Adhésion :** 1 000 FCFA
-    * **Intervention sociale :** 25 000 FCFA *(Hospitalisation, Accident grave, Sinistres naturels)*
-    * **Décès exclu** *(en attente d'arbitrage AG)*
+    * **Intervention sociale :** 25 000 FCFA (Hospitalisation, Accident grave, Sinistres naturels)
+    * **Décès exclu** (en attente d'arbitrage AG)
     * **Retard 3 mois :** Avertissement | **Retard +6 mois :** Radiation
     """)
 
-    # --- BLOC 2 : FILTRES DU TABLEAU DE BORD (EN DESSOUS) ---
-    st.markdown("### 🔍 Filtres du Tableau de Bord")
-    liste_mois = ["Tous les mois"] + list(df['Date'].unique())
-    mois_choisi = st.selectbox("Période (Mois) :", liste_mois)
-    
-    liste_residence = ["Toutes les résidences"] + sorted(list(df['Résidence'].unique()))
-    residence_choisie = st.selectbox("Quartier / Résidence :", liste_residence)
+    # --- FILTRES SUPERPOSÉS ---
+    st.subheader("🔍 Filtres")
+    mois_choisi = st.selectbox("Période (Mois) :", ["Tous les mois"] + list(df_recettes['Date'].unique()))
+    residence_choisie = st.selectbox("Quartier / Résidence :", ["Toutes les résidences"] + sorted(list(df_recettes['Résidence'].unique())))
 
     st.write("---")
 
-    # Application des filtres
-    df_filtre = df.copy()
+    # Application des filtres sur les recettes
+    df_rec_filtre = df_recettes.copy()
     if mois_choisi != "Tous les mois":
-        df_filtre = df_filtre[df_filtre['Date'] == mois_choisi]
+        df_rec_filtre = df_rec_filtre[df_rec_filtre['Date'] == mois_choisi]
     if residence_choisie != "Toutes les résidences":
-        df_filtre = df_filtre[df_filtre['Résidence'] == residence_choisie]
+        df_rec_filtre = df_rec_filtre[df_rec_filtre['Résidence'] == residence_choisie]
 
-    # --- CALCULS DES INDICATEURS CLÉS (KPI) ---
-    total_collecte = int(df_filtre['Montant FCFA'].sum())
-    membres_total = len(df_filtre)
-    membres_cotisants = int((df_filtre['Montant FCFA'] >= 1000).sum())
-    membres_retard = membres_total - membres_cotisants
-    montant_attendu = membres_total * 1000
-    reste_a_recouvrer = max(0, montant_attendu - total_collecte)
-    taux_recouvrement = int((membres_cotisants / membres_total * 100)) if membres_total > 0 else 0
+    # Application du filtre mois sur les dépenses
+    df_dep_filtre = df_depenses.copy()
+    if mois_choisi != "Tous les mois":
+        df_dep_filtre = df_dep_filtre[df_dep_filtre['Date'] == mois_choisi]
 
-    # --- SECTION 1 : VUE D'ENSEMBLE DE LA TRÉSORERIE ---
-    st.subheader(f"📈 Situation Financière ({mois_choisi} | {residence_choisie})")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.markdown(f"<div class='kpi-card'><div class='kpi-title'>Total Collecté</div><div class='kpi-value'>{total_collecte:,} F</div><div class='kpi-sub'>Sur {montant_attendu:,} F attendus</div></div>", unsafe_allow_html=True)
-    with c2:
-        st.markdown(f"<div class='kpi-card' style='border-top-color:#E31B23;'><div class='kpi-title'>Reste à Recouvrer</div><div class='kpi-value' style='color:#E31B23;'>{reste_a_recouvrer:,} F</div><div class='kpi-sub'>{membres_retard} membre(s) en attente</div></div>", unsafe_allow_html=True)
-    with c3:
-        st.markdown(f"<div class='kpi-card' style='border-top-color:#FDEF42;'><div class='kpi-title'>Taux de Participation</div><div class='kpi-value'>{taux_recouvrement} %</div><div class='kpi-sub'>{membres_cotisants} / {membres_total} membres à jour</div></div>", unsafe_allow_html=True)
-    with c4:
-        enveloppe_sociale_globale = int(total_collecte * 0.40)
-        nb_interventions = enveloppe_sociale_globale // 25000
-        st.markdown(f"<div class='kpi-card'><div class='kpi-title'>Capacité Sociale</div><div class='kpi-value'>{nb_interventions} cas</div><div class='kpi-sub'>Aides de 25 000 F possibles</div></div>", unsafe_allow_html=True)
+    # --- CALCULS FINANCIERS GLOBAUX ---
+    total_recettes = int(df_rec_filtre['Montant FCFA'].sum())
+    total_depenses = int(df_dep_filtre['Montant Sorti'].sum()) if residence_choisie == "Toutes les résidences" else 0
+    reste_en_caisse = total_recettes - total_depenses
+
+    # --- SECTION 1 : RECETTES, DÉPENSES & RESTE EN CAISSE ---
+    st.subheader(f"💰 Bilan Général ({mois_choisi})")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("📥 Total Recettes (Entrées)", f"{total_recettes:,} FCFA")
+    c2.metric("📤 Total Dépenses (Sorties)", f"{total_depenses:,} FCFA")
+    c3.metric("🏦 Reste en Caisse (Solde)", f"{reste_en_caisse:,} FCFA")
 
     st.write("---")
 
-    # --- SECTION 2 : VENTILATION DES FONDS (SANS LE DÉCÈS) ---
-    st.subheader("🏦 Répartition des Enveloppes (Charte Révisée)")
+    # --- SECTION 2 : RÉPARTITION PAR ENVELOPPE (60% / 25% / 15%) ---
+    st.subheader("📊 Détail par Enveloppe (Recettes - Dépenses = Reste)")
     
-    fonds_dev = int(total_collecte * 0.60)
-    fonds_sante_accident = int(total_collecte * 0.25)
-    fonds_sinistres_commun = int(total_collecte * 0.15)
+    # Calcul des entrées théoriques selon les % des Sages
+    rec_dev = int(total_recettes * 0.60)
+    rec_sante = int(total_recettes * 0.25)
+    rec_sinistres = int(total_recettes * 0.15)
 
-    col_f1, col_f2, col_f3 = st.columns(3)
-    col_f1.metric("🏗️ Développement (60%)", f"{fonds_dev:,} FCFA", "Projet Électricité / Infrastructures")
-    col_f2.metric("🩺 Santé & Accidents (25%)", f"{fonds_sante_accident:,} FCFA", "Hospitalisation, fractures, blessures graves")
-    col_f3.metric("🌪️ Sinistres & Bien Commun (15%)", f"{fonds_sinistres_commun:,} FCFA", "Incendie, inondation, orage, village")
+    # Calcul des sorties par enveloppe
+    dep_dev = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Developpement']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
+    dep_sante = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Sante']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
+    dep_sinistres = int(df_dep_filtre[df_dep_filtre['Enveloppe'] == 'Sinistres']['Montant Sorti'].sum()) if not df_dep_filtre.empty else 0
+
+    # Tableau récapitulatif clair
+    tableau_caisse = pd.DataFrame({
+        "Enveloppe": ["🏗️ Développement (60%)", "🩺 Santé & Accidents (25%)", "🌪️ Sinistres & Bien Commun (15%)"],
+        "Recettes (Entrées)": [f"{rec_dev:,} F", f"{rec_sante:,} F", f"{rec_sinistres:,} F"],
+        "Dépenses (Sorties)": [f"{dep_dev:,} F", f"{dep_sante:,} F", f"{dep_sinistres:,} F"],
+        "Reste en Caisse": [f"{rec_dev - dep_dev:,} F", f"{rec_sante - dep_sante:,} F", f"{rec_sinistres - dep_sinistres:,} F"]
+    })
+    st.table(tableau_caisse)
 
     st.write("---")
 
-    # --- SECTION 3 : GRAPHIQUES PAR QUARTIER & SUIVI DES MEMBRES ---
-    col_graph, col_statut = st.columns([1.2, 1])
+    # --- SECTION 3 : GRAPHIQUE & SUIVI DES MEMBRES ---
+    col1, col2 = st.columns(2)
+    with col1:
+        st.subheader("🏘️ Recettes par Résidence")
+        st.bar_chart(df_rec_filtre.groupby('Résidence')['Montant FCFA'].sum(), color="#008543")
 
-    with col_graph:
-        st.subheader("🏘️ Collecte par Résidence (FCFA)")
-        df_quartier = df_filtre.groupby('Résidence')['Montant FCFA'].sum().sort_values(ascending=False)
-        st.bar_chart(df_quartier, color="#008543")
-
-    with col_statut:
-        st.subheader("⚖️ Suivi Règlement (Comité des Sages)")
-        df_historique = df.copy()
-        df_historique['Mois_Impaye'] = (df_historique['Montant FCFA'] < 1000).astype(int)
-        suivi_retards = df_historique.groupby(['Nom Complet', 'Résidence'])['Mois_Impaye'].sum().reset_index()
-        
-        def definir_statut(nb_retards):
-            if nb_retards >= 6:
-                return "🔴 Radié (+6 mois)"
-            elif nb_retards >= 3:
-                return "🟠 Avertissement (3-5 mois)"
-            elif nb_retards > 0:
-                return f"🟡 En retard ({nb_retards} mois)"
-            else:
-                return "🟢 À jour"
-                
-        suivi_retards['Statut'] = suivi_retards['Mois_Impaye'].apply(definir_statut)
-        
+    with col2:
+        st.subheader("⚖️ Statut des Membres (Règle des Sages)")
+        df_hist = df_recettes.copy()
+        df_hist['Impaye'] = (df_hist['Montant FCFA'] < 1000).astype(int)
+        suivi = df_hist.groupby(['Nom Complet', 'Résidence'])['Impaye'].sum().reset_index()
+        suivi['Statut'] = suivi['Impaye'].apply(lambda x: "🔴 Radié (+6 mois)" if x >= 6 else ("🟠 Avertissement (3-5 mois)" if x >= 3 else (f"🟡 En retard ({x} mois)" if x > 0 else "🟢 À jour")))
         if residence_choisie != "Toutes les résidences":
-            suivi_retards = suivi_retards[suivi_retards['Résidence'] == residence_choisie]
-            
-        st.dataframe(suivi_retards[['Nom Complet', 'Résidence', 'Statut']], use_container_width=True, height=300)
+            suivi = suivi[suivi['Résidence'] == residence_choisie]
+        st.dataframe(suivi[['Nom Complet', 'Résidence', 'Statut']], use_container_width=True, height=300)
 
     st.write("---")
 
-    # --- SECTION 4 : REGISTRE DÉTAILLÉ DES COTISATIONS ---
-    st.subheader("📋 Registre Détaillé des Transactions")
-    df_affichage = df_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']].sort_values(by=['Montant FCFA', 'Nom Complet'], ascending=[True, True])
-    st.dataframe(df_affichage, use_container_width=True)
+    # --- SECTION 4 : LISTE DES DÉPENSES & COTISATIONS ---
+    st.subheader("📤 Historique des Dépenses")
+    if not df_dep_filtre.empty:
+        st.dataframe(df_dep_filtre, use_container_width=True)
+    else:
+        st.write("Aucune dépense enregistrée pour cette période.")
+
+    st.subheader("📥 Registre des Cotisations")
+    st.dataframe(df_rec_filtre[['Date', 'Nom Complet', 'Résidence', 'Montant FCFA', 'Mode paiement']], use_container_width=True)
 
 except Exception as e:
-    st.error(f"⚠️ Erreur lors du chargement des données. Vérifiez que le fichier 'cotisations.csv' est bien présent sur GitHub. Détails : {e}")
-
-st.write("---")
-st.markdown("<p style='text-align: center; color: gray; font-size: 12px;'>ASSOS NDAYANE VILLAGE — Commune de Tocky Gare, Diourbel | Charte révisée par le Comité des Sages</p>", unsafe_allow_html=True)
+    st.error(f"⚠️ Erreur de lecture : {e}")
