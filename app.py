@@ -15,8 +15,8 @@ st.markdown("""
 <p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>
 """, unsafe_allow_html=True)
 
-st.markdown("<div style='text-align:center; margin-bottom:10px;'><img src='https://flagcdn.com' width='65'></div>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
+#st.markdown("<div style='text-align:center; margin-bottom:10px;'><img src='https://flagcdn.com' width='65'></div>", unsafe_allow_html=True)
+#st.markdown("<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
 
 def net(t):
     return '' if pd.isna(t) else ''.join(c for c in unicodedata.normalize('NFD', str(t).strip().title()) if unicodedata.category(c) != 'Mn')
