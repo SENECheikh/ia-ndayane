@@ -2,8 +2,18 @@ import streamlit as st
 import pandas as pd
 import unicodedata
 
-st.set_page_config(page_title="ASSOS NDAYANE VILLAGE", page_icon="🇸🇳", layout="wide", initial_sidebar_state="collapsed")
-st.markdown("<style>[data-testid='stHeader'], [data-testid='collapsedControl'] {display: none !important;} .block-container {padding-top: 1.5rem !important;} .kpi-card {padding: 15px; background: #F8F9FA; border-top: 4px solid #008543; border-radius: 8px; text-align: center; margin-bottom: 10px;} .kpi-val {color: #008543; font-size: 24px; font-weight: 800;}</style>", unsafe_allow_html=True)
+st.markdown("""
+<div style='text-align:center; margin-bottom:10px;'>
+    <svg width="75" height="50" viewBox="0 0 900 600" style="border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+        <rect width="300" height="600" fill="#00853f"/>
+        <rect x="300" width="300" height="600" fill="#fdef42"/>
+        <rect x="600" width="300" height="600" fill="#e31b23"/>
+        <polygon points="450,200 479,291 575,291 497,347 527,438 450,382 373,438 403,347 325,291 421,291" fill="#00853f"/>
+    </svg>
+</div>
+<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1>
+<p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>
+""", unsafe_allow_html=True)
 
 st.markdown("<div style='text-align:center; margin-bottom:10px;'><img src='https://flagcdn.com' width='65'></div>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; color:#008543; margin-top:0;'>ASSOS NDAYANE VILLAGE</h1><p style='text-align:center; color:#E31B23; font-weight:bold;'>Tableau de Bord Général & Suivi des Cotisations</p><hr>", unsafe_allow_html=True)
