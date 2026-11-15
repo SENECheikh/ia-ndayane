@@ -1,87 +1,149 @@
-Date,Nom ,Prénom,Résidence,Montant FCFA,Mode paiement,,,,,,,,,,,,
-oct,Touré,Moustapha,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Faye,Abib,Mbélane,1000,Wave,Nombre total de membres recensés,,Nombre de membres ayant cotisé,,Nombre de membres n'ayant pas encore cotisé,,,Montant total attendu,,Montant total collecté,,Montant restant à recouvrer
-oct,Faye,Bougar,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Faye,Saliou,Mbélane,1000,Wave,86,,78,,8,,,86000,,78000,,8000
-oct,Faye,Mara,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Faye,Adiouma,Mbélane,1000,Wave,78000,,,,,,,,,,,
-oct,Touré,Arouna,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Faye,Ndoumel,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Ndiaye,Baye Fall,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Ngom,Mamadou,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Dione,Ousseynou,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Faye,Colou,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Sène,Mamadou,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,Faye,Mamadou,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Faye,Ibrahima ,Ngoufor,1000,Wave,,,,,,,,,,,,
-oct,Sène,Khadim,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,Faye,Laïty,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Ngom,Bassirou,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Sène,Mbassa,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Sène,Masse,Mbine Laye Djégane,1000,Wave,,,,,,,,,,,,
-oct,Ndong,Assane,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Faye,Ngouye,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Diouf,Ndiaga,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,Ndiaye,Ngor,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Ngom,Ablaye,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Faye,Made,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Faye,Idrissa,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Faye,Malick ,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,Faye,Bathie,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Ndiaye,Guedj,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,Faye,Samoul ,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Bakhoum,Yalli,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Faye,Samba,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Ngom,Abdou,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,Faye,Adama,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,Faye,Bara,Ngoufor,1000,Wave,,,,,,,,,,,,
-oct,Faye,Laity ,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Faye,Abdoulaye,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Sène,Baye,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,Faye,Ndigue,Ngoufor,1000,Wave,,,,,,,,,,,,
-oct,Faye,Ngouye,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,Ngom,Adama,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,MALICK,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,NDAMBAO,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,SENE,MOSSEL,Bacondite,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,IBOU ,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,BATHIE,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,SAMBAYE,,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,ABDOU,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,SERIGNE CHEIKH,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,IBOU ,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,MBAGNICK,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,SENE,AZIZ,,,,,,,,,,,,,,,
-oct,FAYE,SOUDOU,,,,,,,,,,,,,,,
-oct,DIONE,SERIGNE,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,DIOUF,MOR,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,DIOUF,MBAYE,,,,,,,,,,,,,,,
-oct,FAYE,LATYR,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,FAYE,MOR,,1000,Wave,,,,,,,,,,,,
-oct,NGOM,ABDOU ,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,FAYE,DIOCKEL,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,MADE ,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,DIONE,OMAR,,1000,Wave,,,,,,,,,,,,
-oct,DIONE,ABDOU ,Ngoufor,1000,Wave,,,,,,,,,,,,
-oct,FAYE,NDIANE,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,DJIBANE,Ndesser Tock,,,,,,,,,,,,,,
-oct,SARR,BATHIE,Ndesser Tock,,,,,,,,,,,,,,
-oct,FAYE,MASSE,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,MBENGUE,ADIOU,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,SAMOUL ,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,DIONE,ASSANE,Ndesser Tock,,,,,,,,,,,,,,
-oct,NGOM,OUSMANE,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,DIONE,ADAMA,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,ADIOUMA ,Diambougoum,1000,Wave,,,,,,,,,,,,
-oct,FAYE,AMY ,Mbélane,1000,Wave,,,,,,,,,,,,
-oct,FAYE,NDIOUDE,,1000,Wave,,,,,,,,,,,,
-oct,FAYE,ABLAYE ,Ndesser Tock,,,,,,,,,,,,,,
-oct,FAYE,KHAMADE,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,DIONE,BASSIROU,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,FAYE,DALY,Ndesser Tock,1000,Wave,,,,,,,,,,,,
-oct,DIONE,OMAR ,Ngoufor,1000,Wave,,,,,,,,,,,,
-oct,NGOM,DEMBA,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,NGOM,ADIOU ,Tockassone,1000,Wave,,,,,,,,,,,,
-oct,NDIAYE,ALIOU,,,,,,,,,,,,,,,
-oct,DIONE,CHEIKH(salane),Tockassone,1000,Wave,,,,,,,,,,,,
-oct,SENE,CHEIKH ,Bacondite,1000,Wave,,,,,,,,,,,,
+Date,Nom ,Prénom,Résidence,Montant FCFA,Mode paiement
+sep,Touré,Moustapha,Mbélane,1000,Wave
+sep,Faye,Abib,Mbélane,1000,Wave
+sep,Faye,Bougar,Mbélane,1000,Wave
+sep,Faye,Saliou,Mbélane,1000,Wave
+sep,Faye,Mara,Mbélane,1000,Wave
+sep,Faye,Adiouma,Mbélane,1000,Wave
+sep,Touré,Arouna,Mbélane,1000,Wave
+sep,Faye,Ndoumel,Mbélane,1000,Wave
+sep,Ndiaye,Baye Fall,Tockassone,1000,Wave
+sep,Ngom,Mamadou,Ndesser Tock,1000,Wave
+sep,Dione,Ousseynou,Tockassone,1000,Wave
+sep,Faye,Colou,Mbélane,1000,Wave
+sep,Sène,Mamadou,Bacondite,1000,Wave
+sep,Faye,Mamadou,Diambougoum,1000,Wave
+sep,Faye,Ibrahima ,Ngoufor,1000,Wave
+sep,Sène,Khadim,Bacondite,1000,Wave
+sep,Faye,Laïty,Mbélane,1000,Wave
+sep,Ngom,Bassirou,Ndesser Tock,1000,Wave
+sep,Sène,Mbassa,Ndesser Tock,1000,Wave
+sep,Sène,Masse,Mbine Laye Djégane,1000,Wave
+sep,Ndong,Assane,Tockassone,1000,Wave
+sep,Faye,Ngouye,Mbélane,1000,Wave
+sep,Diouf,Ndiaga,Bacondite,1000,Wave
+sep,Ndiaye,Ngor,Diambougoum,1000,Wave
+sep,Ngom,Ablaye,Ndesser Tock,1000,Wave
+sep,Faye,Made,Tockassone,1000,Wave
+sep,Faye,Idrissa,Tockassone,1000,Wave
+sep,Faye,Malick ,Bacondite,1000,Wave
+sep,Faye,Bathie,Tockassone,1000,Wave
+sep,Ndiaye,Guedj,Tockassone,1000,Wave
+sep,Faye,Samoul ,Diambougoum,1000,Wave
+sep,Bakhoum,Yalli,Ndesser Tock,1000,Wave
+sep,Faye,Samba,Ndesser Tock,1000,Wave
+sep,Ngom,Abdou,Bacondite,1000,Wave
+sep,Faye,Adama,Ndesser Tock,1000,Wave
+sep,Faye,Bara,Ngoufor,1000,Wave
+sep,Faye,Laity ,Diambougoum,1000,Wave
+sep,Faye,Abdoulaye,Diambougoum,1000,Wave
+sep,Sène,Baye,Diambougoum,1000,Wave
+sep,Faye,Ndigue,Ngoufor,1000,Wave
+sep,Faye,Ngouye,Mbélane,1000,Wave
+sep,Ngom,Adama,Ndesser Tock,1000,Wave
+sep,NDIAYE,MALICK,,1000,Wave
+sep,FAYE,NDAMBAO,Mbélane,1000,Wave
+sep,SENE,MOSSEL,Bacondite,1000,Wave
+sep,NDIAYE,IBOU ,Tockassone,1000,Wave
+sep,NDIAYE,BATHIE,Tockassone,1000,Wave
+sep,NDIAYE,SAMBAYE,,1000,Wave
+sep,NDIAYE,ABDOU,,1000,Wave
+sep,FAYE,SERIGNE CHEIKH,Diambougoum,1000,Wave
+sep,NDIAYE,IBOU ,Diambougoum,1000,Wave
+sep,NDIAYE,MBAGNICK,Diambougoum,1000,Wave
+sep,SENE,AZIZ,,,
+sep,FAYE,SOUDOU,,,
+sep,DIONE,SERIGNE,Tockassone,1000,Wave
+sep,DIOUF,MOR,Tockassone,1000,Wave
+sep,DIOUF,MBAYE,,,
+sep,FAYE,LATYR,Tockassone,1000,Wave
+sep,FAYE,MOR,,1000,Wave
+sep,NGOM,ABDOU ,Tockassone,1000,Wave
+sep,FAYE,DIOCKEL,,1000,Wave
+sep,FAYE,MADE ,Mbélane,1000,Wave
+sep,DIONE,OMAR,,1000,Wave
+sep,DIONE,ABDOU ,Ngoufor,1000,Wave
+sep,FAYE,NDIANE,,1000,Wave
+sep,FAYE,DJIBANE,Ndesser Tock,,
+sep,SARR,BATHIE,Ndesser Tock,,
+sep,FAYE,MASSE,Ndesser Tock,1000,Wave
+sep,MBENGUE,ADIOU,,1000,Wave
+sep,FAYE,SAMOUL ,Tockassone,1000,Wave
+sep,DIONE,ASSANE,Ndesser Tock,,
+sep,NGOM,OUSMANE,Ndesser Tock,1000,Wave
+sep,DIONE,ADAMA,,1000,Wave
+sep,FAYE,ADIOUMA ,Diambougoum,1000,Wave
+sep,FAYE,AMY ,Mbélane,1000,Wave
+sep,FAYE,NDIOUDE,,1000,Wave
+sep,FAYE,ABLAYE ,Ndesser Tock,,
+sep,FAYE,KHAMADE,Ndesser Tock,1000,Wave
+sep,DIONE,BASSIROU,Tockassone,1000,Wave
+sep,FAYE,DALY,Ndesser Tock,1000,Wave
+sep,DIONE,OMAR ,Ngoufor,1000,Wave
+sep,NGOM,DEMBA,Tockassone,1000,Wave
+sep,NGOM,ADIOU ,Tockassone,1000,Wave
+sep,NDIAYE,ALIOU,,,
+sep,DIONE,CHEIKH(salane),Tockassone,1000,Wave
+sep,SENE,CHEIKH ,Bacondite,1000,Wave
+oct,Faye,Ndambao ,Mbélane,1000,Wave
+oct,Ngom ,Ablaye ,Ndesser Tock,1000,Wave
+oct,Touré ,Moustapha ,Mbélane,1000,Wave
+oct,Faye ,Ngouye,Mbélane,1000,Wave
+oct,Faye ,Bougar,Mbélane,1000,Wave
+oct,Dione ,Serigne ,Tockassone,1000,Wave
+oct,Faye ,Abdoulaye ,,1000,Wave
+oct,Faye ,Diockel ,Mbélane,1000,Wave
+oct,Faye ,Mass,Ndesser Tock,1000,Wave
+oct,Faye ,Leyti,Diambougoum,1000,Wave
+oct,Ndiaye ,Ngor,Diambougoum,1000,Wave
+oct,Faye ,Mara,Mbélane,1000,Wave
+oct,Ngom ,Bassirou ,Ndesser Tock,1000,Wave
+oct,Séne ,Mbassa,Ndesser Tock,1000,Wave
+oct,Faye ,Bathie ,Tockassone,1000,Wave
+oct,Faye ,Malick ,Bacondite,1000,Wave
+oct,Mbengue ,Adiou,Ndesser Tock,1000,Wave
+oct,Ndiaye,Ibou,Diambougoum,1000,Wave
+oct,Faye ,Ibrahima ,Ngoufor,1000,Wave
+oct,Faye,Bara,Ngoufor,1000,Wave
+oct,Ndiaye ,Abdou,Diambougoum,1000,Wave
+oct,Ndiaye ,Pape Samba,Tockassone,1000,Wave
+oct,Dione ,Ousseynou ,Tockassone,1000,Wave
+oct,Touré ,Arona,Mbélane,1000,Wave
+oct,Faye ,Mamadou ,Diambougoum,1000,Wave
+oct,Faye ,Serigne Cheikh ,Diambougoum,1000,Wave
+oct,Ngom ,Adama ,Ndesser Tock,1000,Wave
+oct,Sène ,Khadim ,Bacondite,1000,Wave
+oct,Faye ,Idrissa,Tockassone,1000,Wave
+oct,Faye ,Malick,Bacondite,1000,Wave
+oct,Ndiaye ,Mbagnick,Diambougoum,1000,Wave
+oct,Ndiaye ,Baye Fall ,Tockassone,1000,Wave
+oct,Diouf ,Ndiaga,Bacondite,1000,Wave
+oct,Bakhoum,Yalli,Ndesser Tock,1000,Wave
+oct,Faye,Adiouma ,Mbélane,1000,Wave
+oct,Sène ,Mass,,1000,Wave
+oct,Faye ,Saliou,Mbélane,1000,Wave
+oct,Faye ,Habib,Mbélane,1000,Wave
+oct,Ngom ,Abdou ,Bacondite,1000,Wave
+oct,Faye ,Adama ,Ndesser Tock,1000,Wave
+oct,Dione ,Omar,Ngoufor,1000,Wave
+oct,Ndong ,Assane ,Tockassone,1000,Wave
+oct,Faye ,Colou,Mbélane,1000,Wave
+oct,Faye ,Mor,Diambougoum,1000,Wave
+oct,Faye ,Amy,Mbélane,1000,Wave
+oct,Faye,Adiouma ,,1000,Wave
+oct,Ngom ,Abdou,Tockassone,1000,Wave
+oct,Ngom ,Mamadou ,Ndesser Tock,1000,Wave
+oct,Sène ,Mamadou ,Bacondite,1000,Wave
+oct,Faye ,Ndoumel ,Mbélane,1000,Wave
+oct,Faye ,Samoul,Diambougoum,1000,Wave
+oct,Faye ,Laity,Mbélane,1000,Wave
+oct,Dione ,Bassirou ,Ngoufor,1000,Wave
+oct,Dione ,Abdou ,Ngoufor,1000,Wave
+oct,Faye ,Ndigue ,Ngoufor,1000,Wave
+oct,Ndiaye ,Bathie ,Tockassone,1000,Wave
+oct,Faye ,Ngouye ,Mbélane,1000,Wave
+oct,Sène ,Cheikh ,Bacondite,1000,Wave
+oct,Faye ,Samoul ,Tockassone,1000,Wave
+oct,Faye ,Made,Tockassone,1000,Wave
+oct,Ndiaye ,Guédjie,Tockassone,1000,Wave
+oct,Sène ,khadim ,Ndesser Tock,1000,Wave
