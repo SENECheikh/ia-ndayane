@@ -82,9 +82,10 @@ sep,FAYE,DALY,Ndesser Tock,1000,Wave
 sep,DIONE,OMAR ,Ngoufor,1000,Wave
 sep,NGOM,DEMBA,Tockassone,1000,Wave
 sep,NGOM,ADIOU ,Tockassone,1000,Wave
-sep,NDIAYE,ALIOU,,,
 sep,DIONE,CHEIKH(salane),Tockassone,1000,Wave
-sep,SENE,CHEIKH ,Bacondite,1000,Wave
+sep,Sène ,CHEIKH ,Bacondite,1000,Wave
+sep,Ndiaye ,Aliou ,Tockassone,1000,Wave
+sep,Ngom ,Omar ,Bacondite,1000,Wave
 oct,Faye,Ndambao ,Mbélane,1000,Wave
 oct,Ngom ,Ablaye ,Ndesser Tock,1000,Wave
 oct,Touré ,Moustapha ,Mbélane,1000,Wave
@@ -114,7 +115,7 @@ oct,Faye ,Serigne Cheikh ,Diambougoum,1000,Wave
 oct,Ngom ,Adama ,Ndesser Tock,1000,Wave
 oct,Sène ,Khadim ,Bacondite,1000,Wave
 oct,Faye ,Idrissa,Tockassone,1000,Wave
-oct,Faye ,Malick,Bacondite,1000,Wave
+oct,Ndiaye ,Malick,Tockassone,1000,Wave
 oct,Ndiaye ,Mbagnick,Diambougoum,1000,Wave
 oct,Ndiaye ,Baye Fall ,Tockassone,1000,Wave
 oct,Diouf ,Ndiaga,Bacondite,1000,Wave
@@ -147,3 +148,11 @@ oct,Faye ,Samoul ,Tockassone,1000,Wave
 oct,Faye ,Made,Tockassone,1000,Wave
 oct,Ndiaye ,Guédjie,Tockassone,1000,Wave
 oct,Sène ,khadim ,Ndesser Tock,1000,Wave
+oct,Faye ,ndioude ,Tockassone,1000,Wave
+oct,Dione ,cheikh ,Tockassone,1000,Wave
+oct,Ndiaye ,Aliou ,Tockassone,1000,Wave
+oct, Faye ,Made,Mbélane,1000,Wave
+oct,Ngom ,Omar,Bacondite,1000,Wave
+oct,Sène ,Mossel ,Bacondite,1000,Wave
+oct,Ngom ,Adiou ,Tockassone,1000,Wave
+oct,Ngom ,Demba ,Tockassone,1000,Wave
